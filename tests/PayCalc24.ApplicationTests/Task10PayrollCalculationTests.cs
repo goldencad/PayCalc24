@@ -13,6 +13,8 @@ namespace PayCalc24.ApplicationTests;
 
 public sealed class Task10PayrollCalculationTests
 {
+    private static readonly string[] ExpectedPresentationOrder=["B","C","A"];
+
     [Fact] public async Task FrozenSnapshotCalculatesDependenciesAndTransitionsPeriod()
     {
         var f=new Fixture();var (period,snapshot)=await f.Freeze();
@@ -20,7 +22,7 @@ public sealed class Task10PayrollCalculationTests
         Assert.Equal(PayrollCalculationRunStatus.SUCCEEDED,run.Status);
         Assert.Equal(PayrollPeriodStatus.CALCULATED,f.Periods.GetById(f.Company,period.Id).LifecycleStatus);
         var results=f.Calculation.ListComponentResults(f.Company,run.Id);
-        Assert.Equal(new[]{"B","C","A"},results.Select(x=>x.ComponentCode));
+        Assert.Equal(ExpectedPresentationOrder,results.Select(x=>x.ComponentCode));
         var byCode=results.ToDictionary(x=>x.ComponentCode);Assert.Equal(100m,byCode["A"].ResultValue!.DecimalValue);Assert.Equal(200m,byCode["B"].ResultValue!.DecimalValue);Assert.Equal(250m,byCode["C"].ResultValue!.DecimalValue);
         Assert.NotNull(byCode["B"].ExplainTraceJson);Assert.Equal(Fixture.FormulaBVersion,byCode["B"].FormulaVersionId);
         Assert.Contains(f.Resolver.EntryId,byCode["A"].InputLedgerEntryIds);Assert.False(string.IsNullOrWhiteSpace(run.ResultHash));
