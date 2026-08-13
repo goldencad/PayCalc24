@@ -81,6 +81,19 @@ public sealed class ProjectDependencyTests
     }
 
     [Fact]
+    public void CoreContractsRemainTs24AdaptersAndDoNotDefineCompanyOrUserMasters()
+    {
+        var contractsDirectory = Path.Combine(RepositoryRoot, "src", "PayCalc24.Contracts");
+        var sources = Directory.GetFiles(contractsDirectory, "*.cs", SearchOption.AllDirectories)
+            .Select(File.ReadAllText)
+            .ToArray();
+
+        Assert.DoesNotContain(sources, source =>
+            source.Contains("class Company", StringComparison.Ordinal) ||
+            source.Contains("class User", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void AvaloniaXamlDoesNotHardCodePresentationContentOrSvgPaths()
     {
         var clientDirectory = Path.Combine(RepositoryRoot, "src", "PayCalc24.Client.Avalonia");
