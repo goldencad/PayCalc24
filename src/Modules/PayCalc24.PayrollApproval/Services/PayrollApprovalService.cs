@@ -75,8 +75,8 @@ public sealed class PayrollApprovalService(ICompanyContext company, ICurrentUser
     }
     public PayrollValidationSummary GetExactReviewContext(PayrollApprovalCaseId id)=>review.GetPayrollValidationSummary(Context(Require(id)));
     public IReadOnlyList<PayrollApprovalEventDto> GetHistory(PayrollApprovalCaseId id){Require(id);return repository.History(company.CompanyId,id);}
-    public IReadOnlyList<PayrollApprovalCaseDto> ListRevisions(PayrollPeriodId id)=>repository.List(company.CompanyId,id).OrderBy(x=>x.SnapshotRevision).ToArray();
-    public PayrollApprovalCaseDto? GetCurrentAuthoritative(PayrollPeriodId id)=>repository.List(company.CompanyId,id).Where(x=>x.Status==PayrollApprovalStatus.Locked).OrderByDescending(x=>x.SnapshotRevision).FirstOrDefault();
+    public IReadOnlyList<PayrollApprovalCaseDto> ListRevisions(PayrollPeriodId periodId)=>repository.List(company.CompanyId,periodId).OrderBy(x=>x.SnapshotRevision).ToArray();
+    public PayrollApprovalCaseDto? GetCurrentAuthoritative(PayrollPeriodId periodId)=>repository.List(company.CompanyId,periodId).Where(x=>x.Status==PayrollApprovalStatus.Locked).OrderByDescending(x=>x.SnapshotRevision).FirstOrDefault();
 
     public PayrollAdjustmentRequestDto RequestAdjustment(RequestAdjustmentCommand command)
     {
@@ -90,14 +90,14 @@ public sealed class PayrollApprovalService(ICompanyContext company, ICurrentUser
             source.Id,source.SnapshotId,source.CalculationRunId,command.AdjustmentType,PayrollAdjustmentStatus.Requested,reason,user.UserId,Now(),null,null,null,null,null,correlation.CorrelationId,1);
         repository.AddAdjustment(value,"REQUEST_ADJUSTMENT",command.IdempotencyKey,fp); return value;
     }
-    public PayrollAdjustmentRequestDto AuthorizeAdjustment(PayrollAdjustmentRequestId id,long expectedRevision,string key)
+    public PayrollAdjustmentRequestDto AuthorizeAdjustment(PayrollAdjustmentRequestId id,long expectedRevision,string idempotencyKey)
     {
-        authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalAction.Adjust); RequireKey(key);
+        authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalAction.Adjust); RequireKey(idempotencyKey);
         var value=RequireAdjustment(id); if(value.Status==PayrollAdjustmentStatus.Authorized) return value;
         if(value.Revision!=expectedRevision) throw Error(DiagnosticCodes.PayrollApprovalConcurrencyConflict,("expectedRevision",expectedRevision),("actualRevision",value.Revision));
         if(value.Status!=PayrollAdjustmentStatus.Requested) throw Error(DiagnosticCodes.PayrollApprovalInvalidTransition,("from",value.Status));
         var next=value with{Status=PayrollAdjustmentStatus.Authorized,AuthorizedBy=user.UserId,AuthorizedAt=Now(),Revision=value.Revision+1};
-        repository.UpdateAdjustment(next,expectedRevision,"AUTHORIZE_ADJUSTMENT",key,Hash(id.Value)); return next;
+        repository.UpdateAdjustment(next,expectedRevision,"AUTHORIZE_ADJUSTMENT",idempotencyKey,Hash(id.Value)); return next;
     }
     public PayrollAdjustmentRequestDto StartNewRevision(StartRevisionCommand command)
     {
