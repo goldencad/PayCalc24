@@ -4,6 +4,7 @@ using PayCalc24.Contracts.Integration;
 using PayCalc24.Contracts.Organization;
 using PayCalc24.Contracts.PayrollApproval;
 using PayCalc24.Contracts.PayrollCalculation;
+using PayCalc24.Contracts.PayrollInput;
 using PayCalc24.Integration.Services;
 
 namespace PayCalc24.ApplicationTests;
