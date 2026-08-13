@@ -37,40 +37,40 @@ public sealed class PayrollApprovalService(ICompanyContext company, ICurrentUser
     }
 
     public PayrollApprovalCaseDto GetCase(PayrollApprovalCaseId id)=>Require(id);
-    public PayrollApprovalCaseDto Submit(ApprovalTransitionCommand c)
+    public PayrollApprovalCaseDto Submit(ApprovalTransitionCommand command)
     {
         authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalAction.Submit);
-        var value=Require(c.ApprovalCaseId); var context=Context(value); var current=artifacts.GetAuthoritativeArtifacts(context);
+        var value=Require(command.ApprovalCaseId); var context=Context(value); var current=artifacts.GetAuthoritativeArtifacts(context);
         ValidatePinned(value,current);
         var validation=review.GetPayrollValidationSummary(context);
         if(!current.CalculationSucceeded || !current.RequiredFundsComplete || validation.Blocking)
             throw Error(DiagnosticCodes.PayrollApprovalSubmitBlocked,("blocking",validation.Blocking));
-        return Transition(value,c,PayrollApprovalStatus.Draft,PayrollApprovalStatus.Submitted,null);
+        return Transition(value,command,PayrollApprovalStatus.Draft,PayrollApprovalStatus.Submitted,null);
     }
-    public PayrollApprovalCaseDto StartReview(ApprovalTransitionCommand c)
-    { authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalAction.Review); return Transition(Require(c.ApprovalCaseId),c,PayrollApprovalStatus.Submitted,PayrollApprovalStatus.InReview,null); }
-    public PayrollApprovalCaseDto Approve(ApprovalTransitionCommand c)
+    public PayrollApprovalCaseDto StartReview(ApprovalTransitionCommand command)
+    { authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalAction.Review); return Transition(Require(command.ApprovalCaseId),command,PayrollApprovalStatus.Submitted,PayrollApprovalStatus.InReview,null); }
+    public PayrollApprovalCaseDto Approve(ApprovalTransitionCommand command)
     {
         authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalAction.Approve);
-        var value=Require(c.ApprovalCaseId); authorization.ValidateDecisionActors(value,user.UserId);
+        var value=Require(command.ApprovalCaseId); authorization.ValidateDecisionActors(value,user.UserId);
         var current=artifacts.GetAuthoritativeArtifacts(Context(value)); ValidatePinned(value,current);
         if(!artifacts.IsLatestProductionRevision(current)) throw Error(DiagnosticCodes.PayrollApprovalStaleCase,("snapshotRevision",value.SnapshotRevision));
         if(review.GetPayrollValidationSummary(Context(value)).Blocking) throw Error(DiagnosticCodes.PayrollApprovalApprovalBlocked,("approvalCaseId",value.Id.Value));
-        return Transition(value,c,PayrollApprovalStatus.InReview,PayrollApprovalStatus.Approved,Optional(c.Reason));
+        return Transition(value,command,PayrollApprovalStatus.InReview,PayrollApprovalStatus.Approved,Optional(command.Reason));
     }
-    public PayrollApprovalCaseDto Reject(ApprovalTransitionCommand c)
+    public PayrollApprovalCaseDto Reject(ApprovalTransitionCommand command)
     {
         authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalAction.Review);
-        var reason=Required(c.Reason,DiagnosticCodes.PayrollApprovalRejectionReasonRequired);
-        return Transition(Require(c.ApprovalCaseId),c,PayrollApprovalStatus.InReview,PayrollApprovalStatus.Rejected,reason);
+        var reason=Required(command.Reason,DiagnosticCodes.PayrollApprovalRejectionReasonRequired);
+        return Transition(Require(command.ApprovalCaseId),command,PayrollApprovalStatus.InReview,PayrollApprovalStatus.Rejected,reason);
     }
-    public PayrollApprovalCaseDto Lock(ApprovalTransitionCommand c)
+    public PayrollApprovalCaseDto Lock(ApprovalTransitionCommand command)
     {
         authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalAction.Lock);
-        var value=Require(c.ApprovalCaseId); if(value.Status==PayrollApprovalStatus.Locked)return value;
+        var value=Require(command.ApprovalCaseId); if(value.Status==PayrollApprovalStatus.Locked)return value;
         var current=artifacts.GetAuthoritativeArtifacts(Context(value)); ValidatePinned(value,current);
         if(!artifacts.IsLatestProductionRevision(current)) throw Error(DiagnosticCodes.PayrollApprovalStaleCase,("snapshotRevision",value.SnapshotRevision));
-        var result=Transition(value,c,PayrollApprovalStatus.Approved,PayrollApprovalStatus.Locked,Optional(c.Reason));
+        var result=Transition(value,command,PayrollApprovalStatus.Approved,PayrollApprovalStatus.Locked,Optional(command.Reason));
         periodClose.CloseCalculatedPeriod(company.CompanyId,value.PayrollPeriodId); return result;
     }
     public PayrollValidationSummary GetExactReviewContext(PayrollApprovalCaseId id)=>review.GetPayrollValidationSummary(Context(Require(id)));
