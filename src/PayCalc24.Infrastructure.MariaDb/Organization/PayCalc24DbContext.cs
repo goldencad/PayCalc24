@@ -24,7 +24,7 @@ internal static class Mapping
     public static void Company<TEntity>(EntityTypeBuilder<TEntity> builder) where TEntity : class => builder.Property<CompanyId>("CompanyId").HasConversion(value => value.Value.ToString("D"), value => CompanyId.From(Guid.Parse(value))).HasColumnType("char(36)").HasMaxLength(36);
     public static void Period<TEntity>(EntityTypeBuilder<TEntity> builder, string propertyName, string prefix) where TEntity : class
     {
-        builder.ComplexProperty(typeof(PayCalc24.Contracts.Temporal.EffectivePeriod), propertyName, period =>
+        builder.ComplexProperty<PayCalc24.Contracts.Temporal.EffectivePeriod>(propertyName, period =>
         {
             period.Property("EffectiveFrom").HasColumnName(prefix + "From").HasColumnType("date");
             period.Property("EffectiveTo").HasColumnName(prefix + "To").HasColumnType("date");
