@@ -19,7 +19,7 @@ public sealed class Task17PayrollApprovalTests
         c=f.Service.Submit(new(c.Id,c.Revision,"submit")); c=f.Service.StartReview(new(c.Id,c.Revision,"review"));
         c=f.Service.Approve(new(c.Id,c.Revision,"approve","checked")); c=f.Service.Lock(new(c.Id,c.Revision,"lock"));
         Assert.Equal(PayrollApprovalStatus.Locked,c.Status); Assert.Equal(f.Artifacts.SnapshotHash,c.SnapshotHash);
-        Assert.Equal(4,f.Service.GetHistory(c.Id).Count); Assert.Equal(1,f.Close.Count);
+        Assert.Equal(4,f.Service.GetHistory(c.Id).Count); Assert.Single(f.Close.ClosedPeriods);
         Assert.Equal(c,f.Service.Lock(new(c.Id,c.Revision,"lock")));
     }
 
@@ -40,7 +40,7 @@ public sealed class Task17PayrollApprovalTests
 
     private sealed class Fixture
     {
-        public readonly ApprovalArtifactContext Artifacts; public readonly FakeClose Close=new(); public readonly IPayrollApprovalService Service;
+        public readonly ApprovalArtifactContext Artifacts; public readonly FakeClose Close=new(); public readonly PayrollApprovalService Service;
         public Fixture(bool blocking=false,bool latest=true,PayrollExecutionMode mode=PayrollExecutionMode.Production)
         {
             var company=CompanyId.From(Guid.NewGuid());var period=PayrollPeriodId.From(Guid.NewGuid());var snapshot=PayrollCalculationSnapshotId.From(Guid.NewGuid());var run=PayrollCalculationRunId.From(Guid.NewGuid());
@@ -56,7 +56,7 @@ public sealed class Task17PayrollApprovalTests
     private sealed class Allow:IPayrollApprovalAuthorization{public void Demand(CompanyId c,UserId u,PayrollApprovalAction a){}public void ValidateDecisionActors(PayrollApprovalCaseDto c,UserId u){} }
     private sealed class FakeArtifacts(ApprovalArtifactContext value,bool latest):IPayrollApprovalArtifactSource{public ApprovalArtifactContext GetAuthoritativeArtifacts(ReviewResultContext c)=>value;public bool IsLatestProductionRevision(ApprovalArtifactContext a)=>latest;}
     private sealed class Revisioner(ApprovalArtifactContext a):IPayrollRevisionOrchestrator{public RevisionStartResult StartNewRevision(PayrollAdjustmentRequestDto q){var x=a with{SnapshotId=PayrollCalculationSnapshotId.From(Guid.NewGuid()),SnapshotRevision=2,CalculationRunId=PayrollCalculationRunId.From(Guid.NewGuid()),SnapshotHash="snapshot-2",CalculationResultHash="result-2"};return new(x.SnapshotId,2,x.CalculationRunId,x);}}
-    private sealed class FakeClose:IPayrollPeriodCloseBoundary{public List<PayrollPeriodId> Count{get;}=[];public void CloseCalculatedPeriod(CompanyId c,PayrollPeriodId p)=>Count.Add(p);}
+    private sealed class FakeClose:IPayrollPeriodCloseBoundary{public List<PayrollPeriodId> ClosedPeriods{get;}=[];public void CloseCalculatedPeriod(CompanyId companyId,PayrollPeriodId periodId)=>ClosedPeriods.Add(periodId);}
     private sealed class FakeReview(ApprovalArtifactContext a,bool blocking):IPayrollReviewService
     {
         private PayrollValidationSummary Summary()=>new(a.CompanyId,a.PayrollPeriodId,a.SnapshotId,a.CalculationRunId,blocking?1:0,blocking?0:1,0,blocking,!blocking,blocking?ReviewStatus.HasErrors:ReviewStatus.HasWarnings,[]);
