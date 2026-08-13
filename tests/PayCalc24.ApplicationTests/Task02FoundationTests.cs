@@ -50,7 +50,8 @@ public sealed class Task02FoundationTests
     [Fact]
     public void MissingLocalizationReturnsCanonicalKeyAndDiagnostic()
     {
-        var result = new LocalizationService(new DictionaryResources([]))
+        var result = new LocalizationService(new DictionaryResources(
+                new Dictionary<(string Culture, string Key), string>()))
             .Resolve("PayrollPeriod.Calculate", SupportedCultures.Vietnamese);
 
         Assert.Equal("PayrollPeriod.Calculate", result.Value);
