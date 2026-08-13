@@ -6,8 +6,9 @@ namespace PayCalc24.Infrastructure.MariaDb.Migrations;
 
 public partial class Task06PayrollInputLedger : Migration
 {
-    protected override void Up(MigrationBuilder m)
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
+        var m = migrationBuilder;
         m.CreateTable("PayrollInputDefinitionVersions",columns:t=>new{
             Id=t.Column<string>("char(36)",maxLength:36),DefinitionId=t.Column<string>("char(36)",maxLength:36),CompanyId=t.Column<string>("char(36)",maxLength:36),Revision=t.Column<int>("int"),Code=t.Column<string>("varchar(64)",maxLength:64),Name=t.Column<string>("varchar(256)",maxLength:256),Description=t.Column<string>("varchar(1024)",maxLength:1024,nullable:true),DataType=t.Column<int>("int"),UnitType=t.Column<int>("int"),SourceType=t.Column<int>("int"),AggregationType=t.Column<int>("int"),IsRequired=t.Column<bool>("tinyint(1)"),AllowManualEntry=t.Column<bool>("tinyint(1)"),AllowExternalEntry=t.Column<bool>("tinyint(1)"),AllowOverride=t.Column<bool>("tinyint(1)"),MinDecimal=t.Column<decimal>("decimal(28,8)",precision:28,scale:8,nullable:true),MaxDecimal=t.Column<decimal>("decimal(28,8)",precision:28,scale:8,nullable:true),MinInteger=t.Column<long>("bigint",nullable:true),MaxInteger=t.Column<long>("bigint",nullable:true),MaxTextLength=t.Column<int>("int",nullable:true),DisplayOrder=t.Column<int>("int",nullable:true),EffectiveFrom=t.Column<DateOnly>("date"),EffectiveTo=t.Column<DateOnly>("date",nullable:true),Status=t.Column<int>("int"),PublicationState=t.Column<int>("int")
         },constraints:c=>c.PrimaryKey("PK_PayrollInputDefinitionVersions",x=>x.Id));
@@ -23,5 +24,5 @@ public partial class Task06PayrollInputLedger : Migration
         m.CreateIndex("IX_PayrollInputLedger_Supersedes","PayrollInputLedgerEntries",new[]{"CompanyId","SupersedesEntryId"});
         m.CreateIndex("IX_PayrollInputLedger_SourceReference","PayrollInputLedgerEntries",new[]{"CompanyId","SourceReference"});
     }
-    protected override void Down(MigrationBuilder m){m.DropTable("PayrollInputLedgerEntries");m.DropTable("PayrollInputDefinitionVersions");}
+    protected override void Down(MigrationBuilder migrationBuilder){migrationBuilder.DropTable("PayrollInputLedgerEntries");migrationBuilder.DropTable("PayrollInputDefinitionVersions");}
 }
