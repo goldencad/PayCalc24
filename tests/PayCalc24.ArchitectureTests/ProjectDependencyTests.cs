@@ -190,6 +190,16 @@ public sealed class ProjectDependencyTests
     }
 
     [Fact]
+    public void PayrollSnapshotsAreRelationalImmutableAndCalculationFree()
+    {
+        AssertSourceExcludes("src/Modules/PayCalc24.PayrollCalculation", "Avalonia", "Microsoft.EntityFrameworkCore", "NationalId", "UpdateFrozenSnapshot", "DateTime.Today", "DateTime.Now", "CalculateGross", "CalculateNet");
+        var migration=File.ReadAllText(Path.Combine(RepositoryRoot,"src","PayCalc24.Infrastructure.MariaDb","Migrations","20260813090000_Task09PayrollPeriodSnapshots.cs"));
+        foreach(var table in new[]{"PayrollPeriods","PayrollPeriodLifecycleEvents","PayrollCalculationSnapshots","PayrollSnapshotSubjects","PayrollSnapshotInputs","PayrollSnapshotFormulaVersions","PayrollSnapshotParameterVersions","PayrollSnapshotLookupVersions","PayrollSnapshotRuleSetVersions"}) Assert.Contains($"CREATE TABLE {table}",migration,StringComparison.Ordinal);
+        Assert.Contains("decimal(28,8)",migration,StringComparison.Ordinal);Assert.DoesNotContain(" float",migration,StringComparison.OrdinalIgnoreCase);Assert.DoesNotContain(" double",migration,StringComparison.OrdinalIgnoreCase);
+        var contracts=File.ReadAllText(Path.Combine(RepositoryRoot,"src","PayCalc24.Contracts","PayrollCalculation","PayrollCalculationContracts.cs"));Assert.DoesNotContain("NationalId",contracts,StringComparison.Ordinal);Assert.Contains("SnapshotHistoricalFacts",contracts,StringComparison.Ordinal);Assert.Contains("SnapshotPolicyConfiguration",contracts,StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AvaloniaXamlDoesNotHardCodePresentationContentOrSvgPaths()
     {
         var clientDirectory = Path.Combine(RepositoryRoot, "src", "PayCalc24.Client.Avalonia");

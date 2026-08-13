@@ -74,4 +74,26 @@ public static class DiagnosticCodes
     public const string DuplicateRulePriority = "RULESET.DUPLICATE_PRIORITY";
     public const string MultipleElseRules = "RULESET.MULTIPLE_ELSE_RULES";
     public const string PublishedRuleSetImmutable = "RULESET.PUBLISHED_IMMUTABLE";
+    public const string DuplicatePayrollPeriodCode = "PAYROLL_PERIOD.DUPLICATE_CODE";
+    public const string InvalidPayrollPeriodDateRange = "PAYROLL_PERIOD.INVALID_DATE_RANGE";
+    public const string InvalidPayrollPeriodTransition = "PAYROLL_PERIOD.INVALID_STATE_TRANSITION";
+    public const string PayrollPeriodNotFound = "PAYROLL_PERIOD.NOT_FOUND";
+    public const string PayrollPeriodConcurrencyConflict = "PAYROLL_PERIOD.CONCURRENCY_CONFLICT";
+    public const string PayrollPeriodReopenReasonRequired = "PAYROLL_PERIOD.REOPEN_REASON_REQUIRED";
+    public const string PayrollPreparationSubjectAssignmentMissing = "PAYROLL_PREPARATION.SUBJECT_ASSIGNMENT_MISSING";
+    public const string PayrollPreparationSubjectAssignmentAmbiguous = "PAYROLL_PREPARATION.SUBJECT_ASSIGNMENT_AMBIGUOUS";
+    public const string PayrollPreparationRequiredInputMissing = "PAYROLL_PREPARATION.REQUIRED_INPUT_MISSING";
+    public const string PayrollPreparationInputAmbiguous = "PAYROLL_PREPARATION.INPUT_AMBIGUOUS";
+    public const string PayrollPreparationCompensationSchemeMissing = "PAYROLL_PREPARATION.COMPENSATION_SCHEME_MISSING";
+    public const string PayrollPreparationFormulaVersionMissing = "PAYROLL_PREPARATION.FORMULA_VERSION_MISSING";
+    public const string PayrollPreparationParameterVersionMissing = "PAYROLL_PREPARATION.PARAMETER_VERSION_MISSING";
+    public const string PayrollPreparationLookupVersionMissing = "PAYROLL_PREPARATION.LOOKUP_VERSION_MISSING";
+    public const string PayrollPreparationRuleSetVersionMissing = "PAYROLL_PREPARATION.RULESET_VERSION_MISSING";
+    public const string PayrollPreparationCrossCompanyReference = "PAYROLL_PREPARATION.CROSS_COMPANY_REFERENCE";
+    public const string PayrollPreparationBlockingErrors = "PAYROLL_PREPARATION.BLOCKING_ERRORS";
+    public const string PayrollSnapshotNotFound = "PAYROLL_SNAPSHOT.NOT_FOUND";
+    public const string PayrollSnapshotAlreadyFrozen = "PAYROLL_SNAPSHOT.ALREADY_FROZEN";
+    public const string PayrollSnapshotImmutable = "PAYROLL_SNAPSHOT.IMMUTABLE";
+    public const string PayrollSnapshotInvalidRevision = "PAYROLL_SNAPSHOT.INVALID_REVISION";
+    public const string PayrollSnapshotHashMismatch = "PAYROLL_SNAPSHOT.HASH_MISMATCH";
 }
