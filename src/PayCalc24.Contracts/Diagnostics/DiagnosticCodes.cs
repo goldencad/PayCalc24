@@ -2,6 +2,13 @@ namespace PayCalc24.Contracts.Diagnostics;
 
 public static class DiagnosticCodes
 {
+    public const string PayrollReviewPeriodNotFound="PAYROLL_REVIEW.PERIOD_NOT_FOUND";
+    public const string PayrollReviewSnapshotNotFound="PAYROLL_REVIEW.SNAPSHOT_NOT_FOUND";
+    public const string PayrollReviewCalculationRunNotFound="PAYROLL_REVIEW.CALCULATION_RUN_NOT_FOUND";
+    public const string PayrollReviewComparisonResultNotFound="PAYROLL_REVIEW.COMPARISON_RESULT_NOT_FOUND";
+    public const string PayrollReviewCrossCompanyReference="PAYROLL_REVIEW.CROSS_COMPANY_REFERENCE";
+    public const string PayrollReviewVarianceBaselineInvalid="PAYROLL_REVIEW.VARIANCE_BASELINE_INVALID";
+    public const string PayrollReviewExplainProvenanceIncomplete="PAYROLL_REVIEW.EXPLAIN_PROVENANCE_INCOMPLETE";
     public const string PerformanceKpiDefinitionNotFound="PERFORMANCE.KPI_DEFINITION_NOT_FOUND";
     public const string PerformanceDuplicateKpiCode="PERFORMANCE.DUPLICATE_KPI_CODE";
     public const string PerformanceKpiAssignmentNotFound="PERFORMANCE.KPI_ASSIGNMENT_NOT_FOUND";

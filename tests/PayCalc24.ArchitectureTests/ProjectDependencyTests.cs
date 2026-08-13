@@ -254,6 +254,23 @@ public sealed class ProjectDependencyTests
     }
 
     [Fact]
+    public void PayrollReviewIsReadOnlyProvenanceBasedAndCalculationFree()
+    {
+        var project=LoadProject("src/Modules/PayCalc24.PayrollReview/PayCalc24.PayrollReview.csproj");
+        Assert.Equal(["PayCalc24.Contracts","PayCalc24.Domain"],ProjectReferences(project));
+        Assert.Empty(PackageReferences(project));
+        AssertSourceExcludes("src/Modules/PayCalc24.PayrollReview",
+            "Avalonia","Microsoft.EntityFrameworkCore","PayCalc24.FormulaEngine","PayCalc24.Attendance",
+            "PayCalc24.Performance","DateTime.Now","DateTime.Today","GetCurrent(","GetLatest(",
+            "CalculateGross","CalculateNet","PIT","BHXH","Approval","ScenarioSnapshot","float ","double ",
+            "UpdateCalculation","UpdateFund","P1","P2","P3");
+        var contracts=File.ReadAllText(Path.Combine(RepositoryRoot,"src","PayCalc24.Contracts","PayrollReview","PayrollReviewContracts.cs"));
+        Assert.Contains("IPayrollReviewSource",contracts,StringComparison.Ordinal);
+        Assert.Contains("PayrollReviewDataset",contracts,StringComparison.Ordinal);
+        Assert.DoesNotContain("NationalId",contracts,StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void ReferencePolicyBusinessCodesNeverEnterGenericEnginesOrPersistence()
     {
         foreach (var boundary in new[]
