@@ -7,6 +7,20 @@ public sealed class ProjectDependencyTests
     private static readonly string RepositoryRoot = FindRepositoryRoot();
 
     [Fact]
+    public void StatutoryAndAccountingBoundaryIsGenericDynamicAndDecimalOnly()
+    {
+        var project=LoadProject("src/Modules/PayCalc24.Integration/PayCalc24.Integration.csproj");
+        Assert.Equal(["PayCalc24.Contracts","PayCalc24.Domain"],ProjectReferences(project));
+        AssertSourceExcludes("src/Modules/PayCalc24.Integration","Microsoft.EntityFrameworkCore","System.Net.Http","Odoo","ezBooks","DateTime.Now","DateTime.Today","GetCurrent(","GetLatest(","P1","P2","P3","float ","double ");
+        var contracts=File.ReadAllText(Path.Combine(RepositoryRoot,"src","PayCalc24.Contracts","Integration","StatutoryIntegrationContracts.cs"));
+        Assert.Contains("IStatutoryProvider",contracts,StringComparison.Ordinal);Assert.Contains("StatutoryContributionItem",contracts,StringComparison.Ordinal);
+        Assert.DoesNotContain("BhxhAmount",contracts,StringComparison.OrdinalIgnoreCase);Assert.DoesNotContain("BhytAmount",contracts,StringComparison.OrdinalIgnoreCase);Assert.DoesNotContain("BhtnAmount",contracts,StringComparison.OrdinalIgnoreCase);
+        var migration=File.ReadAllText(Path.Combine(RepositoryRoot,"src","PayCalc24.Infrastructure.MariaDb","Migrations","20260813180000_Task18StatutoryAccounting.cs"));
+        foreach(var table in new[]{"StatutoryCalculationResults","StatutoryContributionItems","StatutoryDeductionItems","NetPayResults","EmployerCostResults","PayrollAccountingDocuments","PayrollAccountingLines","PayrollIntegrationDeliveries"})Assert.Contains($"CREATE TABLE {table}",migration,StringComparison.Ordinal);
+        Assert.Contains("decimal(28,8)",migration,StringComparison.Ordinal);Assert.DoesNotContain(" float",migration,StringComparison.OrdinalIgnoreCase);Assert.DoesNotContain(" double",migration,StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void PayrollApprovalIsWorkflowOnlyAndHistoricalResultsHaveNoMutationApi()
     {
         var project=LoadProject("src/Modules/PayCalc24.PayrollApproval/PayCalc24.PayrollApproval.csproj");

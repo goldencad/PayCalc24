@@ -2,6 +2,21 @@ namespace PayCalc24.Contracts.Diagnostics;
 
 public static class DiagnosticCodes
 {
+    public const string StatutoryProviderNotFound = "STATUTORY.PROVIDER_NOT_FOUND";
+    public const string StatutoryProviderVersionUnavailable = "STATUTORY.PROVIDER_VERSION_UNAVAILABLE";
+    public const string StatutoryResultMissing = "STATUTORY.RESULT_MISSING";
+    public const string StatutoryCrossCompanyReference = "STATUTORY.CROSS_COMPANY_REFERENCE";
+    public const string StatutoryRequestInvalid = "STATUTORY.REQUEST_INVALID";
+    public const string StatutoryIdempotencyConflict = "STATUTORY.IDEMPOTENCY_CONFLICT";
+    public const string StatutoryCalculationFailed = "STATUTORY.CALCULATION_FAILED";
+    public const string NetPayRequiredStatutoryResultMissing = "NET_PAY.REQUIRED_STATUTORY_RESULT_MISSING";
+    public const string NetPayInvalidEarningClassification = "NET_PAY.INVALID_EARNING_CLASSIFICATION";
+    public const string NetPayResultInvalid = "NET_PAY.RESULT_INVALID";
+    public const string AccountingMappingMissing = "ACCOUNTING.MAPPING_MISSING";
+    public const string AccountingDocumentUnbalanced = "ACCOUNTING.DOCUMENT_UNBALANCED";
+    public const string AccountingIdempotencyConflict = "ACCOUNTING.IDEMPOTENCY_CONFLICT";
+    public const string IntegrationTargetNotConfigured = "INTEGRATION.TARGET_NOT_CONFIGURED";
+    public const string IntegrationPublishFailed = "INTEGRATION.PUBLISH_FAILED";
     public const string PayrollApprovalCaseNotFound = "PAYROLL_APPROVAL.CASE_NOT_FOUND";
     public const string PayrollApprovalInvalidTransition = "PAYROLL_APPROVAL.INVALID_STATE_TRANSITION";
     public const string PayrollApprovalSubmitBlocked = "PAYROLL_APPROVAL.SUBMIT_BLOCKED";

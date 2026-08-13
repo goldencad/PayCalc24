@@ -18,7 +18,7 @@
 15 NOT STARTED — Validation / Explain / Variance / Funding Review
 16 NOT STARTED — Scenario / Replay / Back-test / What-if
 17 NOT STARTED — Review / Approval / Lock / Recalculation
-18 NOT STARTED — Statutory / Net Pay / Accounting / Integrations
+18 CLOSED — Statutory / Net Pay / Accounting / Integrations
 19 NOT STARTED — Reporting + Avalonia UI Foundation + SVG
 20 NOT STARTED — Avalonia + Actipro End-to-End MVP
 ```
