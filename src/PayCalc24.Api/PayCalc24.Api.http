@@ -1,0 +1,6 @@
+@PayCalc24.Api_HostAddress = http://localhost:0
+
+GET {{PayCalc24.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

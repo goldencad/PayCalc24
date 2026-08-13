@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\PayCalc24.Application\PayCalc24.Application.csproj" />
+    <ProjectReference Include="..\PayCalc24.Contracts\PayCalc24.Contracts.csproj" />
+    <ProjectReference Include="..\PayCalc24.Infrastructure.MariaDb\PayCalc24.Infrastructure.MariaDb.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+</Project>
