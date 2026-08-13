@@ -121,6 +121,35 @@ public sealed class ProjectDependencyTests
     }
 
     [Fact]
+    public void PayrollInputIsAnIndependentAppendOnlyModule()
+    {
+        var project = LoadProject("src/Modules/PayCalc24.PayrollInput/PayCalc24.PayrollInput.csproj");
+        Assert.Equal(["PayCalc24.Contracts", "PayCalc24.Domain"], ProjectReferences(project));
+        Assert.Empty(PackageReferences(project));
+        AssertSourceExcludes(
+            "src/Modules/PayCalc24.PayrollInput",
+            "Microsoft.EntityFrameworkCore", "Avalonia", "Odoo", "TaxOnline", "iBHXH",
+            "UpdateLedgerValue", "DeleteLedgerEntry");
+
+        var model = File.ReadAllText(Path.Combine(
+            RepositoryRoot, "src", "Modules", "PayCalc24.PayrollInput", "Model", "PayrollInputModel.cs"));
+        Assert.DoesNotContain("set; }", model[model.IndexOf("public sealed class PayrollInputLedgerEntry", StringComparison.Ordinal)..], StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void PayrollInputPersistenceUsesTypedDecimalColumnsAndNoFloatingPoint()
+    {
+        AssertSourceExcludes("src/PayCalc24.Infrastructure.MariaDb/PayrollInput", "float", "double");
+        var source = File.ReadAllText(Path.Combine(RepositoryRoot, "src", "PayCalc24.Infrastructure.MariaDb", "PayrollInput", "PayrollInputRows.cs"));
+        Assert.Contains("HasPrecision(28,8)", source, StringComparison.Ordinal);
+        Assert.Contains("DecimalValue", source, StringComparison.Ordinal);
+        Assert.Contains("IntegerValue", source, StringComparison.Ordinal);
+        Assert.Contains("BooleanValue", source, StringComparison.Ordinal);
+        Assert.Contains("DateValue", source, StringComparison.Ordinal);
+        Assert.Contains("TextValue", source, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AvaloniaXamlDoesNotHardCodePresentationContentOrSvgPaths()
     {
         var clientDirectory = Path.Combine(RepositoryRoot, "src", "PayCalc24.Client.Avalonia");

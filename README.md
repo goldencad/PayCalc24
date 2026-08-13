@@ -13,3 +13,5 @@ dotnet test PayCalc24.sln --no-build
 ```
 
 The solution structure and dependency rules are documented in `docs/adr` and enforced by `PayCalc24.ArchitectureTests`.
+
+Payroll inputs from manual and provider sources cross one canonical, company-scoped `PayrollInputDefinition` and append-only ledger boundary. Corrections append superseding entries, and the future Formula Engine consumes the deterministic effective ledger view rather than querying source-system storage.

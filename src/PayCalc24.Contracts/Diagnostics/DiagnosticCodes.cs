@@ -29,4 +29,22 @@ public static class DiagnosticCodes
     public const string EffectiveSchemeNotFound = "COMPENSATION.EFFECTIVE_SCHEME_NOT_FOUND";
     public const string EffectiveSchemeAmbiguous = "COMPENSATION.EFFECTIVE_SCHEME_AMBIGUOUS";
     public const string InvalidAssignmentSchemeScope = "COMPENSATION.INVALID_ASSIGNMENT_SCHEME_SCOPE";
+    public const string DuplicateInputDefinitionCode = "PAYROLL_INPUT.DUPLICATE_DEFINITION_CODE";
+    public const string InputDefinitionNotFound = "PAYROLL_INPUT.DEFINITION_NOT_FOUND";
+    public const string EffectiveInputDefinitionNotFound = "PAYROLL_INPUT.EFFECTIVE_DEFINITION_NOT_FOUND";
+    public const string EffectiveInputDefinitionAmbiguous = "PAYROLL_INPUT.EFFECTIVE_DEFINITION_AMBIGUOUS";
+    public const string PublishedInputDefinitionImmutable = "PAYROLL_INPUT.PUBLISHED_DEFINITION_IMMUTABLE";
+    public const string InvalidPayrollInputValueType = "PAYROLL_INPUT.INVALID_VALUE_TYPE";
+    public const string PayrollInputValueOutOfRange = "PAYROLL_INPUT.VALUE_OUT_OF_RANGE";
+    public const string ManualPayrollInputNotAllowed = "PAYROLL_INPUT.MANUAL_ENTRY_NOT_ALLOWED";
+    public const string ExternalPayrollInputNotAllowed = "PAYROLL_INPUT.EXTERNAL_ENTRY_NOT_ALLOWED";
+    public const string CrossCompanyPayrollSubject = "PAYROLL_INPUT.CROSS_COMPANY_SUBJECT";
+    public const string CrossCompanyInputDefinition = "PAYROLL_INPUT.CROSS_COMPANY_DEFINITION";
+    public const string DuplicatePayrollInputIdempotencyKey = "PAYROLL_INPUT.DUPLICATE_IDEMPOTENCY_KEY";
+    public const string SupersededPayrollInputNotFound = "PAYROLL_INPUT.SUPERSEDED_ENTRY_NOT_FOUND";
+    public const string CrossCompanyPayrollInputSupersession = "PAYROLL_INPUT.CROSS_COMPANY_SUPERSESSION";
+    public const string InvalidPayrollInputSupersessionScope = "PAYROLL_INPUT.INVALID_SUPERSESSION_SCOPE";
+    public const string PayrollInputSupersessionCycle = "PAYROLL_INPUT.SUPERSESSION_CYCLE";
+    public const string AmbiguousActivePayrollInput = "PAYROLL_INPUT.AMBIGUOUS_ACTIVE_INPUT";
+    public const string InvalidPayrollInputAggregation = "PAYROLL_INPUT.INVALID_AGGREGATION";
 }

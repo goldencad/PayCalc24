@@ -5,6 +5,7 @@ using PayCalc24.Contracts.Organization;
 using PayCalc24.Organization.Model;
 using PayCalc24.Contracts.Compensation;
 using PayCalc24.Infrastructure.MariaDb.Compensation;
+using PayCalc24.Infrastructure.MariaDb.PayrollInput;
 
 namespace PayCalc24.Infrastructure.MariaDb.Organization;
 
@@ -19,6 +20,8 @@ public sealed class PayCalc24DbContext(DbContextOptions<PayCalc24DbContext> opti
     internal DbSet<PayComponentVersionRow> PayComponentVersions => Set<PayComponentVersionRow>();
     internal DbSet<CompensationSchemeVersionRow> CompensationSchemeVersions => Set<CompensationSchemeVersionRow>();
     internal DbSet<CompensationSchemeComponentRow> CompensationSchemeComponents => Set<CompensationSchemeComponentRow>();
+    internal DbSet<PayrollInputDefinitionVersionRow> PayrollInputDefinitionVersions => Set<PayrollInputDefinitionVersionRow>();
+    internal DbSet<PayrollInputLedgerEntryRow> PayrollInputLedgerEntries => Set<PayrollInputLedgerEntryRow>();
     protected override void OnModelCreating(ModelBuilder modelBuilder) => modelBuilder.ApplyConfigurationsFromAssembly(typeof(PayCalc24DbContext).Assembly);
 }
 
