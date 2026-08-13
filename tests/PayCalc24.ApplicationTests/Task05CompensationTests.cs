@@ -29,10 +29,10 @@ public sealed class Task05CompensationTests
     {
         public CompanyId CompanyId{get;}=CompanyId.From(Guid.NewGuid()); public CompensationCatalogService Service{get;} private readonly Dictionary<PayComponentId,string> codes=[];
         public Fixture(){Service=new(new Context(CompanyId));}
-        public PayComponentContent Content(string code,string? name=null)=>new(code,name??$"Base {code}",null,PayComponentType.FIXED,CalculationMethod.INPUT,null,null,true,false,false,true,true,true,10,CatalogStatus.ACTIVE);
+        public static PayComponentContent Content(string code,string? name=null)=>new(code,name??$"Base {code}",null,PayComponentType.FIXED,CalculationMethod.INPUT,null,null,true,false,false,true,true,true,10,CatalogStatus.ACTIVE);
         public PayComponentDto Component(string code,EffectivePeriod? period=null){var dto=Service.CreatePayComponentDraft(CompanyId,PayComponentId.From(Guid.NewGuid()),period??new(Jan1,null),Content(code));codes[dto.Id]=code;return dto;}
         public string Code(PayComponentId id)=>codes[id];
-        public SchemeComponentContent Item(PayComponentId id,int sequence)=>new(CompensationSchemeComponentId.From(Guid.NewGuid()),id,sequence,true,null,null,CatalogStatus.ACTIVE);
+        public static SchemeComponentContent Item(PayComponentId id,int sequence)=>new(CompensationSchemeComponentId.From(Guid.NewGuid()),id,sequence,true,null,null,CatalogStatus.ACTIVE);
         public CompensationSchemeDto Scheme(string code,(PayComponentId Id,int Sequence)[] items,EffectivePeriod? period=null)=>Service.CreateSchemeDraft(CompanyId,CompensationSchemeId.From(Guid.NewGuid()),period??new(Jan1,null),new(code,code,null,CatalogStatus.ACTIVE,items.Select(x=>Item(x.Id,x.Sequence)).ToArray()));
     }
     private sealed record Context(CompanyId CompanyId):ICompanyContext;
