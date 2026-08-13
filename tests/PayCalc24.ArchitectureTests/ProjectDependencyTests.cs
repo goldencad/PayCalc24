@@ -254,6 +254,29 @@ public sealed class ProjectDependencyTests
     }
 
     [Fact]
+    public void ReferencePolicyBusinessCodesNeverEnterGenericEnginesOrPersistence()
+    {
+        foreach (var boundary in new[]
+        {
+            "src/Modules/PayCalc24.Compensation",
+            "src/Modules/PayCalc24.FormulaEngine",
+            "src/Modules/PayCalc24.PayrollCalculation",
+            "src/Modules/PayCalc24.PayrollFunds",
+            "src/Modules/PayCalc24.Attendance",
+            "src/Modules/PayCalc24.Performance",
+            "src/PayCalc24.Infrastructure.MariaDb"
+        })
+        {
+            AssertSourceExcludes(boundary, "P1Calculator", "P2Calculator", "P3Calculator", "P3Engine",
+                "P3FundEngine", "TS24PayrollEngine", "Ts24ReferencePolicyBuilder", "component.Code == \"P1\"",
+                "component.Code == \"P2\"", "component.Code == \"P3\"", "company == \"TS24\"");
+        }
+
+        AssertSourceExcludes("src/Modules/PayCalc24.PayrollCalculation", "PayCalc24.Attendance", "PayCalc24.Performance");
+        AssertSourceExcludes("src/Modules/PayCalc24.PayrollFunds", "PayCalc24.Attendance", "PayCalc24.Performance");
+    }
+
+    [Fact]
     public void AvaloniaXamlDoesNotHardCodePresentationContentOrSvgPaths()
     {
         var clientDirectory = Path.Combine(RepositoryRoot, "src", "PayCalc24.Client.Avalonia");
