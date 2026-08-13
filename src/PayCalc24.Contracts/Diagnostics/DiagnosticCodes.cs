@@ -14,4 +14,9 @@ public static class DiagnosticCodes
     public const string PublishedVersionImmutable = "TEMPORAL.PUBLISHED_VERSION_IMMUTABLE";
     public const string InvalidPublicationState = "TEMPORAL.INVALID_PUBLICATION_STATE";
     public const string InvalidVersionNumber = "TEMPORAL.INVALID_VERSION_NUMBER";
+    public const string DuplicateEmployeeCode = "ORGANIZATION.DUPLICATE_EMPLOYEE_CODE";
+    public const string InvalidOrganizationReference = "ORGANIZATION.INVALID_REFERENCE";
+    public const string OrganizationCycle = "ORGANIZATION.HIERARCHY_CYCLE";
+    public const string PrimaryAssignmentOverlap = "ORGANIZATION.PRIMARY_ASSIGNMENT_OVERLAP";
+    public const string AssignmentNotFound = "ORGANIZATION.ASSIGNMENT_NOT_FOUND";
 }

@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PayCalc24.Application\PayCalc24.Application.csproj" />
     <ProjectReference Include="..\PayCalc24.Domain\PayCalc24.Domain.csproj" />
+    <ProjectReference Include="..\Modules\PayCalc24.Organization\PayCalc24.Organization.csproj" />
   </ItemGroup>
 
   <ItemGroup>

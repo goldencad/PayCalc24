@@ -114,6 +114,13 @@ public sealed class ProjectDependencyTests
     }
 
     [Fact]
+    public void OrganizationDomainAndCanonicalContractsDoNotLeakLegacyPersistenceNames()
+    {
+        AssertSourceExcludes("src/Modules/PayCalc24.Organization", "nhanvien", "phongban", "vitricongviec", "MucLuongCB", "MucLuongBHXH");
+        AssertSourceExcludes("src/PayCalc24.Contracts/Organization", "nhanvien", "phongban", "vitricongviec", "Microsoft.EntityFrameworkCore");
+    }
+
+    [Fact]
     public void AvaloniaXamlDoesNotHardCodePresentationContentOrSvgPaths()
     {
         var clientDirectory = Path.Combine(RepositoryRoot, "src", "PayCalc24.Client.Avalonia");
