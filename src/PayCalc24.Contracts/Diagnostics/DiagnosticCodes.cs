@@ -19,4 +19,14 @@ public static class DiagnosticCodes
     public const string OrganizationCycle = "ORGANIZATION.HIERARCHY_CYCLE";
     public const string PrimaryAssignmentOverlap = "ORGANIZATION.PRIMARY_ASSIGNMENT_OVERLAP";
     public const string AssignmentNotFound = "ORGANIZATION.ASSIGNMENT_NOT_FOUND";
+    public const string DuplicatePayComponentCode = "COMPENSATION.DUPLICATE_PAY_COMPONENT_CODE";
+    public const string DuplicateCompensationSchemeCode = "COMPENSATION.DUPLICATE_SCHEME_CODE";
+    public const string CrossCompanySchemeComponent = "COMPENSATION.CROSS_COMPANY_SCHEME_COMPONENT";
+    public const string DuplicateSchemeComponent = "COMPENSATION.DUPLICATE_SCHEME_COMPONENT";
+    public const string InvalidComponentSequence = "COMPENSATION.INVALID_COMPONENT_SEQUENCE";
+    public const string PayComponentNotFound = "COMPENSATION.PAY_COMPONENT_NOT_FOUND";
+    public const string PublishedConfigurationImmutable = "COMPENSATION.PUBLISHED_CONFIGURATION_IMMUTABLE";
+    public const string EffectiveSchemeNotFound = "COMPENSATION.EFFECTIVE_SCHEME_NOT_FOUND";
+    public const string EffectiveSchemeAmbiguous = "COMPENSATION.EFFECTIVE_SCHEME_AMBIGUOUS";
+    public const string InvalidAssignmentSchemeScope = "COMPENSATION.INVALID_ASSIGNMENT_SCHEME_SCOPE";
 }

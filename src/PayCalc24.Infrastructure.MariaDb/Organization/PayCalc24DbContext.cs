@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PayCalc24.Contracts.Identity;
 using PayCalc24.Contracts.Organization;
 using PayCalc24.Organization.Model;
+using PayCalc24.Contracts.Compensation;
+using PayCalc24.Infrastructure.MariaDb.Compensation;
 
 namespace PayCalc24.Infrastructure.MariaDb.Organization;
 
@@ -14,6 +16,9 @@ public sealed class PayCalc24DbContext(DbContextOptions<PayCalc24DbContext> opti
     public DbSet<Position> Positions => Set<Position>();
     public DbSet<JobGrade> JobGrades => Set<JobGrade>();
     public DbSet<PayrollAssignment> PayrollAssignments => Set<PayrollAssignment>();
+    internal DbSet<PayComponentVersionRow> PayComponentVersions => Set<PayComponentVersionRow>();
+    internal DbSet<CompensationSchemeVersionRow> CompensationSchemeVersions => Set<CompensationSchemeVersionRow>();
+    internal DbSet<CompensationSchemeComponentRow> CompensationSchemeComponents => Set<CompensationSchemeComponentRow>();
     protected override void OnModelCreating(ModelBuilder modelBuilder) => modelBuilder.ApplyConfigurationsFromAssembly(typeof(PayCalc24DbContext).Assembly);
 }
 
@@ -49,4 +54,4 @@ internal sealed class PositionConfiguration : IEntityTypeConfiguration<Position>
 internal sealed class JobGradeConfiguration : IEntityTypeConfiguration<JobGrade>
 { public void Configure(EntityTypeBuilder<JobGrade>b){b.ToTable("JobGrades");b.HasKey(x=>x.Id);b.Property(x=>x.Id).Uuid(x=>x.Value,JobGradeId.From);Mapping.Company(b);b.Property(x=>x.Code).HasMaxLength(64);b.Property(x=>x.Name).HasMaxLength(256);Mapping.Period(b,nameof(JobGrade.EffectivePeriod),"Effective");b.HasIndex(x=>new{x.CompanyId,x.Code}).IsUnique();} }
 internal sealed class PayrollAssignmentConfiguration : IEntityTypeConfiguration<PayrollAssignment>
-{ public void Configure(EntityTypeBuilder<PayrollAssignment>b){b.ToTable("PayrollAssignments");b.HasKey(x=>x.Id);b.Property(x=>x.Id).Uuid(x=>x.Value,PayrollAssignmentId.From);Mapping.Company(b);b.Property(x=>x.PayrollSubjectId).Uuid(x=>x.Value,PayrollSubjectId.From);b.Property(x=>x.OrganizationUnitId).Uuid(x=>x.Value,OrganizationUnitId.From);b.Property(x=>x.PositionId).Uuid(x=>x.Value,PositionId.From);b.Property(x=>x.JobGradeId).HasConversion(x=>x.HasValue?x.Value.Value.ToString("D"):null,x=>x==null?null:JobGradeId.From(Guid.Parse(x))).HasColumnType("char(36)");Mapping.Period(b,nameof(PayrollAssignment.EffectivePeriod),"Effective");b.HasIndex(x=>new{x.CompanyId,x.PayrollSubjectId,x.IsPrimary});} }
+{ public void Configure(EntityTypeBuilder<PayrollAssignment>b){b.ToTable("PayrollAssignments");b.HasKey(x=>x.Id);b.Property(x=>x.Id).Uuid(x=>x.Value,PayrollAssignmentId.From);Mapping.Company(b);b.Property(x=>x.PayrollSubjectId).Uuid(x=>x.Value,PayrollSubjectId.From);b.Property(x=>x.OrganizationUnitId).Uuid(x=>x.Value,OrganizationUnitId.From);b.Property(x=>x.PositionId).Uuid(x=>x.Value,PositionId.From);b.Property(x=>x.JobGradeId).HasConversion(x=>x.HasValue?x.Value.Value.ToString("D"):null,x=>x==null?null:JobGradeId.From(Guid.Parse(x))).HasColumnType("char(36)");b.Property(x=>x.CompensationSchemeId).HasConversion(x=>x.HasValue?x.Value.Value.ToString("D"):null,x=>x==null?null:CompensationSchemeId.From(Guid.Parse(x))).HasColumnType("char(36)");Mapping.Period(b,nameof(PayrollAssignment.EffectivePeriod),"Effective");b.HasIndex(x=>new{x.CompanyId,x.PayrollSubjectId,x.IsPrimary});b.HasIndex(x=>new{x.CompanyId,x.CompensationSchemeId});} }

@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="../../src/PayCalc24.Application/PayCalc24.Application.csproj" />
     <ProjectReference Include="../../src/Modules/PayCalc24.Organization/PayCalc24.Organization.csproj" />
+    <ProjectReference Include="../../src/Modules/PayCalc24.Compensation/PayCalc24.Compensation.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />

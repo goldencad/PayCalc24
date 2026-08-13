@@ -1,4 +1,5 @@
 using PayCalc24.Contracts.Diagnostics;
+using PayCalc24.Contracts.Compensation;
 using PayCalc24.Contracts.Identity;
 using PayCalc24.Contracts.Organization;
 using PayCalc24.Contracts.Temporal;
@@ -107,7 +108,8 @@ public sealed class PayrollAssignment
 {
     public PayrollAssignment(PayrollAssignmentId id, CompanyId companyId, PayrollSubjectId payrollSubjectId, OrganizationUnitId organizationUnitId,
         PositionId positionId, JobGradeId? jobGradeId, EffectivePeriod effectivePeriod, bool isPrimary=true, RecordStatus status=RecordStatus.ACTIVE,
-        string? sourceSystem=null, string? externalAssignmentId=null)
-    { Id=id;CompanyId=companyId;PayrollSubjectId=payrollSubjectId;OrganizationUnitId=organizationUnitId;PositionId=positionId;JobGradeId=jobGradeId;EffectivePeriod=PayrollSubject.Valid(effectivePeriod);IsPrimary=isPrimary;Status=status;SourceSystem=PayrollSubject.Optional(sourceSystem);ExternalAssignmentId=PayrollSubject.Optional(externalAssignmentId); }
-    private PayrollAssignment() { } public PayrollAssignmentId Id{get;private set;} public CompanyId CompanyId{get;private set;} public PayrollSubjectId PayrollSubjectId{get;private set;} public OrganizationUnitId OrganizationUnitId{get;private set;} public PositionId PositionId{get;private set;} public JobGradeId? JobGradeId{get;private set;} public EffectivePeriod EffectivePeriod{get;private set;} public bool IsPrimary{get;private set;} public RecordStatus Status{get;private set;} public string? SourceSystem{get;private set;} public string? ExternalAssignmentId{get;private set;}
+        string? sourceSystem=null, string? externalAssignmentId=null, CompensationSchemeId? compensationSchemeId=null)
+    { Id=id;CompanyId=companyId;PayrollSubjectId=payrollSubjectId;OrganizationUnitId=organizationUnitId;PositionId=positionId;JobGradeId=jobGradeId;EffectivePeriod=PayrollSubject.Valid(effectivePeriod);IsPrimary=isPrimary;Status=status;SourceSystem=PayrollSubject.Optional(sourceSystem);ExternalAssignmentId=PayrollSubject.Optional(externalAssignmentId);CompensationSchemeId=compensationSchemeId; }
+    private PayrollAssignment() { } public PayrollAssignmentId Id{get;private set;} public CompanyId CompanyId{get;private set;} public PayrollSubjectId PayrollSubjectId{get;private set;} public OrganizationUnitId OrganizationUnitId{get;private set;} public PositionId PositionId{get;private set;} public JobGradeId? JobGradeId{get;private set;} public CompensationSchemeId? CompensationSchemeId{get;private set;} public EffectivePeriod EffectivePeriod{get;private set;} public bool IsPrimary{get;private set;} public RecordStatus Status{get;private set;} public string? SourceSystem{get;private set;} public string? ExternalAssignmentId{get;private set;}
+    internal void SetCompensationScheme(CompensationSchemeId schemeId) => CompensationSchemeId=schemeId;
 }
