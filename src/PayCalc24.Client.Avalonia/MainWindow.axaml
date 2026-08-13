@@ -4,6 +4,32 @@
         Width="1024"
         Height="700"
         MinWidth="800"
-        MinHeight="600">
-  <Grid />
+        MinHeight="600"
+        Title="{Binding AppTitle}">
+  <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="220,*">
+    <Border Grid.ColumnSpan="2" Padding="20,14" Background="{DynamicResource SurfaceBrush}">
+      <StackPanel Orientation="Horizontal" Spacing="18">
+        <TextBlock Text="{Binding AppTitle}" FontSize="22" FontWeight="SemiBold" />
+        <TextBlock Text="{Binding CurrentTitle}" VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}" />
+      </StackPanel>
+    </Border>
+    <Border Grid.Row="1" Padding="12" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,1,1">
+      <ListBox Name="NavigationList" ItemsSource="{Binding LocalizedItems}" SelectionChanged="OnNavigationChanged" SelectedIndex="0">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding Label}" Margin="10,8" />
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </Border>
+    <Grid Grid.Row="1" Grid.Column="1" Margin="28" RowDefinitions="Auto,*">
+      <TextBlock Text="{Binding CurrentTitle}" FontSize="30" FontWeight="SemiBold" />
+      <Border Grid.Row="1" Margin="0,22,0,0" Padding="24" CornerRadius="8" Background="{DynamicResource SurfaceBrush}">
+        <TextBlock Text="{Binding CurrentTitle}" FontSize="18" />
+      </Border>
+    </Grid>
+    <Border Grid.Row="2" Grid.ColumnSpan="2" Padding="16,8" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0">
+      <TextBlock Text="{Binding StatusText}" Foreground="{DynamicResource TextSecondaryBrush}" />
+    </Border>
+  </Grid>
 </Window>

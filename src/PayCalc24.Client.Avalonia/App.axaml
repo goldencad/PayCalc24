@@ -4,4 +4,17 @@
   <Application.Styles>
     <FluentTheme />
   </Application.Styles>
+  <Application.Resources>
+    <ResourceDictionary>
+      <SolidColorBrush x:Key="BackgroundBrush" Color="#F4F6F8" />
+      <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="TextPrimaryBrush" Color="#17212B" />
+      <SolidColorBrush x:Key="TextSecondaryBrush" Color="#5C6975" />
+      <SolidColorBrush x:Key="BorderBrush" Color="#D8DEE4" />
+      <SolidColorBrush x:Key="AccentBrush" Color="#2563EB" />
+      <SolidColorBrush x:Key="SuccessBrush" Color="#16803A" />
+      <SolidColorBrush x:Key="WarningBrush" Color="#B45F06" />
+      <SolidColorBrush x:Key="ErrorBrush" Color="#C62828" />
+    </ResourceDictionary>
+  </Application.Resources>
 </Application>

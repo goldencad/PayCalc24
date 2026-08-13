@@ -408,4 +408,18 @@ public sealed class ProjectDependencyTests
         return directory?.FullName
             ?? throw new DirectoryNotFoundException("Could not locate the PayCalc24 repository root.");
     }
+    [Fact]
+    public void Task19ReportingAndDesktopBoundariesRemainPortable()
+    {
+        var reporting = LoadProject("src/Modules/PayCalc24.Reporting/PayCalc24.Reporting.csproj");
+        Assert.Equal(["PayCalc24.Contracts", "PayCalc24.Domain"], ProjectReferences(reporting));
+        Assert.Empty(PackageReferences(reporting));
+        AssertSourceExcludes("src/Modules/PayCalc24.Reporting", "Avalonia", "Microsoft.EntityFrameworkCore",
+            "PayCalc24.Attendance", "PayCalc24.Performance", "FormulaEngine", "GetCurrent(", "GetLatest(", "P1", "P2", "P3", "float ", "double ");
+
+        var desktop = LoadProject("src/PayCalc24.Client.Avalonia/PayCalc24.Client.Avalonia.csproj");
+        Assert.Equal(["PayCalc24.Contracts"], ProjectReferences(desktop));
+        AssertSourceExcludes("src/PayCalc24.Client.Avalonia", "SafeFormulaEngine", "PayrollFundCalculationService",
+            "StatutoryServices", "PayrollCalculationService", "Microsoft.EntityFrameworkCore", "System.Drawing", "Registry", "Win32");
+    }
 }

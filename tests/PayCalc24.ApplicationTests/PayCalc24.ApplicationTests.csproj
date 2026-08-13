@@ -22,6 +22,8 @@
     <ProjectReference Include="..\..\src\Modules\PayCalc24.Scenarios\PayCalc24.Scenarios.csproj" />
     <ProjectReference Include="..\..\src\Modules\PayCalc24.PayrollApproval\PayCalc24.PayrollApproval.csproj" />
     <ProjectReference Include="..\..\src\Modules\PayCalc24.Integration\PayCalc24.Integration.csproj" />
+    <ProjectReference Include="..\..\src\Modules\PayCalc24.Reporting\PayCalc24.Reporting.csproj" />
+    <ProjectReference Include="..\..\src\PayCalc24.Client.Avalonia\PayCalc24.Client.Avalonia.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />
