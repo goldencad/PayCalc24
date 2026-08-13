@@ -2,6 +2,24 @@ namespace PayCalc24.Contracts.Diagnostics;
 
 public static class DiagnosticCodes
 {
+    public const string AttendanceSourceNotFound="ATTENDANCE.SOURCE_NOT_FOUND";
+    public const string AttendanceInvalidMapping="ATTENDANCE.INVALID_MAPPING";
+    public const string AttendanceUnknownPayrollSubject="ATTENDANCE.UNKNOWN_PAYROLL_SUBJECT";
+    public const string AttendanceCrossCompanySubject="ATTENDANCE.CROSS_COMPANY_SUBJECT";
+    public const string AttendanceInvalidBusinessDate="ATTENDANCE.INVALID_BUSINESS_DATE";
+    public const string AttendanceInvalidTimeRange="ATTENDANCE.INVALID_TIME_RANGE";
+    public const string AttendanceNegativeDuration="ATTENDANCE.NEGATIVE_DURATION";
+    public const string AttendanceDuplicateSourceRecord="ATTENDANCE.DUPLICATE_SOURCE_RECORD";
+    public const string AttendanceImportIdempotencyConflict="ATTENDANCE.IMPORT_IDEMPOTENCY_CONFLICT";
+    public const string AttendancePolicyNotFound="ATTENDANCE.POLICY_NOT_FOUND";
+    public const string AttendancePolicyAmbiguous="ATTENDANCE.POLICY_AMBIGUOUS";
+    public const string AttendancePublishedPolicyImmutable="ATTENDANCE.PUBLISHED_POLICY_IMMUTABLE";
+    public const string AttendancePayrollInputDefinitionNotFound="ATTENDANCE.PAYROLL_INPUT_DEFINITION_NOT_FOUND";
+    public const string AttendancePayrollInputTypeMismatch="ATTENDANCE.PAYROLL_INPUT_TYPE_MISMATCH";
+    public const string AttendancePayrollInputUnitMismatch="ATTENDANCE.PAYROLL_INPUT_UNIT_MISMATCH";
+    public const string AttendanceBlockingValidationFailed="ATTENDANCE.BLOCKING_VALIDATION_FAILED";
+    public const string AttendanceBatchNotFound="ATTENDANCE.BATCH_NOT_FOUND";
+    public const string AttendanceBatchImmutable="ATTENDANCE.BATCH_IMMUTABLE";
     public const string PayrollFundDuplicateCode="PAYROLL_FUND.DUPLICATE_CODE";
     public const string PayrollFundDefinitionNotFound="PAYROLL_FUND.DEFINITION_NOT_FOUND";
     public const string PayrollFundVersionNotFound="PAYROLL_FUND.VERSION_NOT_FOUND";

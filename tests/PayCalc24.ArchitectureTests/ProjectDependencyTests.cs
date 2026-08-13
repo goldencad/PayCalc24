@@ -226,6 +226,21 @@ public sealed class ProjectDependencyTests
     }
 
     [Fact]
+    public void AttendanceIsGenericAndOnlyPublishesThroughPayrollInputContracts()
+    {
+        var project=LoadProject("src/Modules/PayCalc24.Attendance/PayCalc24.Attendance.csproj");
+        Assert.Equal(["PayCalc24.Contracts","PayCalc24.Domain"],ProjectReferences(project));
+        AssertSourceExcludes("src/Modules/PayCalc24.Attendance","Microsoft.EntityFrameworkCore","PayCalc24.PayrollCalculation","PayCalc24.PayrollFunds","CalculateGross","CalculateNet","DateTime.Now","DateTime.Today","P1","P2","P3","KPI","float ","double ");
+        var source=File.ReadAllText(Path.Combine(RepositoryRoot,"src","Modules","PayCalc24.Attendance","Services","AttendanceService.cs"));
+        Assert.Contains("IPayrollInputLedgerService",source,StringComparison.Ordinal);
+        Assert.Contains("ledger.SubmitAsync",source,StringComparison.Ordinal);
+        Assert.Contains("ledger.CorrectAsync",source,StringComparison.Ordinal);
+        var migration=File.ReadAllText(Path.Combine(RepositoryRoot,"src","PayCalc24.Infrastructure.MariaDb","Migrations","20260813120000_Task12Attendance.cs"));
+        foreach(var table in new[]{"AttendanceSourceDefinitions","AttendanceMappingVersions","AttendancePolicyVersions","AttendanceImportBatches","AttendanceFacts","AttendanceDerivedInputProvenance"})Assert.Contains($"CREATE TABLE {table}",migration,StringComparison.Ordinal);
+        Assert.Contains("decimal(28,8)",migration,StringComparison.Ordinal);Assert.DoesNotContain(" float",migration,StringComparison.OrdinalIgnoreCase);Assert.DoesNotContain(" double",migration,StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void AvaloniaXamlDoesNotHardCodePresentationContentOrSvgPaths()
     {
         var clientDirectory = Path.Combine(RepositoryRoot, "src", "PayCalc24.Client.Avalonia");
