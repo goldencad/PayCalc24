@@ -31,7 +31,7 @@ public sealed class Task13PerformanceTests
 
  private sealed class Fixture
  {
-  public CompanyId Company{get;}=CompanyId.From(Guid.NewGuid());public PayrollSubjectId Subject{get;}=PayrollSubjectId.From(Guid.NewGuid());public KpiScope Scope=>new(KpiScopeType.INDIVIDUAL,Subject);public EffectivePeriod Effective=>new(new(2026,1,1),new(2027,1,1));public PerformancePeriod Period=>new("2026-Q3",new(2026,7,1),new(2026,9,30));public FakeLedger Ledger{get;}=new();public PerformanceService Service{get;}
+  public CompanyId Company{get;}=CompanyId.From(Guid.NewGuid());public PayrollSubjectId Subject{get;}=PayrollSubjectId.From(Guid.NewGuid());public KpiScope Scope=>new(KpiScopeType.INDIVIDUAL,Subject);public static EffectivePeriod Effective=>new(new(2026,1,1),new(2027,1,1));public static PerformancePeriod Period=>new("2026-Q3",new(2026,7,1),new(2026,9,30));public FakeLedger Ledger{get;}=new();public PerformanceService Service{get;}
   public Fixture(){Service=new(new Context(Company),new User(),new Correlation(),new Audit(),TimeProvider.System,new Scopes(Company,Subject),new Expressions(),new Definitions(Company),Ledger);}
   public PerformanceEvaluationRequest Request(PerformancePolicyVersionId p,IReadOnlyList<KpiAssignmentId>a,IReadOnlyList<KpiResultId>r,IReadOnlyList<PerformanceInput>i,PerformanceExecutionMode mode)=>new(Company,Scope,Period,new(2026,8,31),p,a,r,i,mode,"corr","1.0.0",mode==PerformanceExecutionMode.PRODUCTION?PayrollPeriodId.From(Guid.NewGuid()):null);
  }
