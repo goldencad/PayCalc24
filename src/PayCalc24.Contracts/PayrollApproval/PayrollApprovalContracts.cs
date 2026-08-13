@@ -10,10 +10,10 @@ public readonly record struct PayrollApprovalCaseId(Guid Value) { public static 
 public readonly record struct PayrollApprovalEventId(Guid Value) { public static PayrollApprovalEventId From(Guid value)=>new(value); }
 public readonly record struct PayrollAdjustmentRequestId(Guid Value) { public static PayrollAdjustmentRequestId From(Guid value)=>new(value); }
 
-public enum PayrollApprovalStatus { DRAFT, SUBMITTED, IN_REVIEW, APPROVED, REJECTED, LOCKED }
-public enum PayrollAdjustmentType { INPUT_CORRECTION, POLICY_CORRECTION, ASSIGNMENT_CORRECTION, MANUAL_ADJUSTMENT, OTHER }
-public enum PayrollAdjustmentStatus { REQUESTED, AUTHORIZED, REVISION_STARTED }
-public enum PayrollApprovalPermission { PAYROLL_SUBMIT, PAYROLL_REVIEW, PAYROLL_APPROVE, PAYROLL_LOCK, PAYROLL_ADJUST }
+public enum PayrollApprovalStatus { Draft, Submitted, InReview, Approved, Rejected, Locked }
+public enum PayrollAdjustmentType { InputCorrection, PolicyCorrection, AssignmentCorrection, ManualAdjustment, Other }
+public enum PayrollAdjustmentStatus { Requested, Authorized, RevisionStarted }
+public enum PayrollApprovalAction { Submit, Review, Approve, Lock, Adjust }
 
 public sealed record ApprovalArtifactContext(CompanyId CompanyId, PayrollPeriodId PayrollPeriodId,
     PayrollCalculationSnapshotId SnapshotId, int SnapshotRevision, string SnapshotHash,
@@ -57,7 +57,7 @@ public sealed record RevisionStartResult(PayrollCalculationSnapshotId SnapshotId
 
 public interface IPayrollApprovalAuthorization
 {
-    void Demand(CompanyId companyId, UserId userId, PayrollApprovalPermission permission);
+    void Demand(CompanyId companyId, UserId userId, PayrollApprovalAction action);
     void ValidateDecisionActors(PayrollApprovalCaseDto approvalCase, UserId actor);
 }
 public interface IPayrollApprovalArtifactSource
@@ -67,7 +67,7 @@ public interface IPayrollApprovalArtifactSource
 }
 public interface IPayrollApprovalRepository
 {
-    PayrollApprovalCaseDto? Get(CompanyId companyId, PayrollApprovalCaseId id);
+    PayrollApprovalCaseDto? GetCase(CompanyId companyId, PayrollApprovalCaseId id);
     PayrollApprovalCaseDto? GetByIdempotency(CompanyId companyId, string operation, string key);
     void Add(PayrollApprovalCaseDto value, string operation, string key, string fingerprint);
     void Update(PayrollApprovalCaseDto value, long expectedRevision, string operation, string key, string fingerprint);
@@ -88,7 +88,7 @@ public interface IPayrollPeriodCloseBoundary { void CloseCalculatedPeriod(Compan
 public interface IPayrollApprovalService
 {
     PayrollApprovalCaseDto Create(CreateApprovalCaseCommand command);
-    PayrollApprovalCaseDto Get(PayrollApprovalCaseId id);
+    PayrollApprovalCaseDto GetCase(PayrollApprovalCaseId id);
     PayrollApprovalCaseDto Submit(ApprovalTransitionCommand command);
     PayrollApprovalCaseDto StartReview(ApprovalTransitionCommand command);
     PayrollApprovalCaseDto Approve(ApprovalTransitionCommand command);

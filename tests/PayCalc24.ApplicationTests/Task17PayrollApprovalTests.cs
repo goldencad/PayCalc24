@@ -17,7 +17,7 @@ public sealed class Task17PayrollApprovalTests
         using var _=new CultureScope(culture); var f=new Fixture(); var c=f.Create();
         c=f.Service.Submit(new(c.Id,c.Revision,"submit")); c=f.Service.StartReview(new(c.Id,c.Revision,"review"));
         c=f.Service.Approve(new(c.Id,c.Revision,"approve","checked")); c=f.Service.Lock(new(c.Id,c.Revision,"lock"));
-        Assert.Equal(PayrollApprovalStatus.LOCKED,c.Status); Assert.Equal(f.Artifacts.SnapshotHash,c.SnapshotHash);
+        Assert.Equal(PayrollApprovalStatus.Locked,c.Status); Assert.Equal(f.Artifacts.SnapshotHash,c.SnapshotHash);
         Assert.Equal(4,f.Service.GetHistory(c.Id).Count); Assert.Equal(1,f.Close.Count);
         Assert.Equal(c,f.Service.Lock(new(c.Id,c.Revision,"lock")));
     }
@@ -26,13 +26,13 @@ public sealed class Task17PayrollApprovalTests
     { var f=new Fixture(blocking:true);var c=f.Create();var e=Assert.Throws<PayrollApprovalException>(()=>f.Service.Submit(new(c.Id,c.Revision,"s")));Assert.Equal("PAYROLL_APPROVAL.SUBMIT_BLOCKED",e.Diagnostic.Code);Assert.Empty(f.Service.GetHistory(c.Id)); }
 
     [Fact] public void RejectionRequiresReasonAndCannotLock()
-    { var f=new Fixture();var c=f.Create();c=f.Service.Submit(new(c.Id,c.Revision,"s"));c=f.Service.StartReview(new(c.Id,c.Revision,"r"));Assert.Throws<PayrollApprovalException>(()=>f.Service.Reject(new(c.Id,c.Revision,"bad")));c=f.Service.Reject(new(c.Id,c.Revision,"reject","Attendance correction required"));Assert.Equal(PayrollApprovalStatus.REJECTED,c.Status);Assert.Throws<PayrollApprovalException>(()=>f.Service.Lock(new(c.Id,c.Revision,"l"))); }
+    { var f=new Fixture();var c=f.Create();c=f.Service.Submit(new(c.Id,c.Revision,"s"));c=f.Service.StartReview(new(c.Id,c.Revision,"r"));Assert.Throws<PayrollApprovalException>(()=>f.Service.Reject(new(c.Id,c.Revision,"bad")));c=f.Service.Reject(new(c.Id,c.Revision,"reject","Attendance correction required"));Assert.Equal(PayrollApprovalStatus.Rejected,c.Status);Assert.Throws<PayrollApprovalException>(()=>f.Service.Lock(new(c.Id,c.Revision,"l"))); }
 
     [Fact] public void ConcurrentDecisionUsesRevisionAndStaleCaseCannotApprove()
     { var f=new Fixture();var c=f.Create();c=f.Service.Submit(new(c.Id,c.Revision,"s"));c=f.Service.StartReview(new(c.Id,c.Revision,"r"));var revision=c.Revision;c=f.Service.Approve(new(c.Id,revision,"a"));var e=Assert.Throws<PayrollApprovalException>(()=>f.Service.Reject(new(c.Id,revision,"b","no")));Assert.Equal("PAYROLL_APPROVAL.CONCURRENCY_CONFLICT",e.Diagnostic.Code);var stale=new Fixture(latest:false);var x=stale.Create();x=stale.Service.Submit(new(x.Id,x.Revision,"s"));x=stale.Service.StartReview(new(x.Id,x.Revision,"r"));Assert.Throws<PayrollApprovalException>(()=>stale.Service.Approve(new(x.Id,x.Revision,"a"))); }
 
     [Fact] public void AdjustmentRequiresReasonAuthorizationAndStrictlyNewRevision()
-    { var f=new Fixture();var c=f.Create();c=f.Service.Submit(new(c.Id,c.Revision,"s"));c=f.Service.StartReview(new(c.Id,c.Revision,"r"));c=f.Service.Approve(new(c.Id,c.Revision,"a"));c=f.Service.Lock(new(c.Id,c.Revision,"l"));Assert.Throws<PayrollApprovalException>(()=>f.Service.RequestAdjustment(new(c.Id,PayrollAdjustmentType.INPUT_CORRECTION," ","q")));var q=f.Service.RequestAdjustment(new(c.Id,PayrollAdjustmentType.INPUT_CORRECTION,"Late attendance correction","q"));Assert.Throws<PayrollApprovalException>(()=>f.Service.StartNewRevision(new(q.Id,q.Revision,"n")));q=f.Service.AuthorizeAdjustment(q.Id,q.Revision,"auth");q=f.Service.StartNewRevision(new(q.Id,q.Revision,"new"));Assert.Equal(PayrollAdjustmentStatus.REVISION_STARTED,q.Status);Assert.Equal(2,q.NewSnapshotRevision);Assert.Equal(PayrollApprovalStatus.LOCKED,f.Service.Get(c.Id).Status); }
+    { var f=new Fixture();var c=f.Create();c=f.Service.Submit(new(c.Id,c.Revision,"s"));c=f.Service.StartReview(new(c.Id,c.Revision,"r"));c=f.Service.Approve(new(c.Id,c.Revision,"a"));c=f.Service.Lock(new(c.Id,c.Revision,"l"));Assert.Throws<PayrollApprovalException>(()=>f.Service.RequestAdjustment(new(c.Id,PayrollAdjustmentType.InputCorrection," ","q")));var q=f.Service.RequestAdjustment(new(c.Id,PayrollAdjustmentType.InputCorrection,"Late attendance correction","q"));Assert.Throws<PayrollApprovalException>(()=>f.Service.StartNewRevision(new(q.Id,q.Revision,"n")));q=f.Service.AuthorizeAdjustment(q.Id,q.Revision,"auth");q=f.Service.StartNewRevision(new(q.Id,q.Revision,"new"));Assert.Equal(PayrollAdjustmentStatus.RevisionStarted,q.Status);Assert.Equal(2,q.NewSnapshotRevision);Assert.Equal(PayrollApprovalStatus.Locked,f.Service.GetCase(c.Id).Status); }
 
     [Fact] public void ScenarioCannotCreateProductionApprovalCase()
     { var f=new Fixture(mode:PayrollExecutionMode.WhatIf);var e=Assert.Throws<PayrollApprovalException>(()=>f.Create());Assert.Equal("PAYROLL_APPROVAL.NON_PRODUCTION_RESULT",e.Diagnostic.Code); }
@@ -52,7 +52,7 @@ public sealed class Task17PayrollApprovalTests
     private sealed record Context(CompanyId CompanyId):ICompanyContext;
     private sealed record Current(UserId UserId):ICurrentUser{public bool HasPermission(string code)=>true;}
     private sealed class Correlation:ICorrelationContext{public string CorrelationId=>"corr";public string? IdempotencyKey=>null;}
-    private sealed class Allow:IPayrollApprovalAuthorization{public void Demand(CompanyId c,UserId u,PayrollApprovalPermission p){}public void ValidateDecisionActors(PayrollApprovalCaseDto c,UserId u){} }
+    private sealed class Allow:IPayrollApprovalAuthorization{public void Demand(CompanyId c,UserId u,PayrollApprovalAction a){}public void ValidateDecisionActors(PayrollApprovalCaseDto c,UserId u){} }
     private sealed class FakeArtifacts(ApprovalArtifactContext value,bool latest):IPayrollApprovalArtifactSource{public ApprovalArtifactContext GetAuthoritativeArtifacts(ReviewResultContext c)=>value;public bool IsLatestProductionRevision(ApprovalArtifactContext a)=>latest;}
     private sealed class Revisioner(ApprovalArtifactContext a):IPayrollRevisionOrchestrator{public RevisionStartResult StartNewRevision(PayrollAdjustmentRequestDto q){var x=a with{SnapshotId=PayrollCalculationSnapshotId.From(Guid.NewGuid()),SnapshotRevision=2,CalculationRunId=PayrollCalculationRunId.From(Guid.NewGuid()),SnapshotHash="snapshot-2",CalculationResultHash="result-2"};return new(x.SnapshotId,2,x.CalculationRunId,x);}}
     private sealed class FakeClose:IPayrollPeriodCloseBoundary{public List<PayrollPeriodId> Count{get;}=[];public void CloseCalculatedPeriod(CompanyId c,PayrollPeriodId p)=>Count.Add(p);}

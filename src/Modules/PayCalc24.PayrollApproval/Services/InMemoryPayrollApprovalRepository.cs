@@ -14,7 +14,7 @@ public sealed class InMemoryPayrollApprovalRepository : IPayrollApprovalReposito
     private readonly List<PayrollApprovalEventDto> events=[];
     private readonly Dictionary<(CompanyId,PayrollAdjustmentRequestId),PayrollAdjustmentRequestDto> adjustments=[];
     private readonly Dictionary<(CompanyId,string,string),(string Fingerprint,PayrollAdjustmentRequestId Id)> adjustmentKeys=[];
-    public PayrollApprovalCaseDto? Get(CompanyId c,PayrollApprovalCaseId id){lock(gate)return cases.GetValueOrDefault((c,id));}
+    public PayrollApprovalCaseDto? GetCase(CompanyId c,PayrollApprovalCaseId id){lock(gate)return cases.GetValueOrDefault((c,id));}
     public PayrollApprovalCaseDto? GetByIdempotency(CompanyId c,string op,string key){lock(gate)return caseKeys.TryGetValue((c,op,key),out var x)?cases[(c,x.Id)]:null;}
     public void Add(PayrollApprovalCaseDto v,string op,string key,string fp){lock(gate){if(caseKeys.TryGetValue((v.CompanyId,op,key),out var old)&&old.Fingerprint!=fp)Conflict();cases.Add((v.CompanyId,v.Id),v);caseKeys[(v.CompanyId,op,key)]=(fp,v.Id);}}
     public void Update(PayrollApprovalCaseDto v,long expected,string op,string key,string fp){lock(gate){var old=cases[(v.CompanyId,v.Id)];if(old.Revision!=expected)Concurrency();if(caseKeys.TryGetValue((v.CompanyId,op,key),out var prior)){if(prior.Fingerprint!=fp)Conflict();return;}cases[(v.CompanyId,v.Id)]=v;caseKeys[(v.CompanyId,op,key)]=(fp,v.Id);}}

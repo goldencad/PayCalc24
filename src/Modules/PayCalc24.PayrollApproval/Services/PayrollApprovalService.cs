@@ -30,85 +30,85 @@ public sealed class PayrollApprovalService(ICompanyContext company, ICurrentUser
             command.Artifacts.PayrollPeriodId,command.Artifacts.SnapshotId,command.Artifacts.SnapshotRevision,
             command.Artifacts.SnapshotHash,command.Artifacts.CalculationRunId,command.Artifacts.CalculationResultHash,
             command.Artifacts.FundResultHashes.Order(StringComparer.Ordinal).ToArray(),command.Artifacts.ReviewContextFingerprint,fp,
-            PayrollApprovalStatus.DRAFT,1,command.SupersedesApprovalCaseId,at,actor,
+            PayrollApprovalStatus.Draft,1,command.SupersedesApprovalCaseId,at,actor,
             SubmittedAt:null,SubmittedBy:null,ReviewStartedAt:null,ReviewedBy:null,ApprovedAt:null,ApprovedBy:null,
             RejectedAt:null,RejectedBy:null,LockedAt:null,LockedBy:null,CurrentDecisionReason:null,CorrelationId:correlation.CorrelationId);
         repository.Add(value,"CREATE",command.IdempotencyKey,fingerprint); return value;
     }
 
-    public PayrollApprovalCaseDto Get(PayrollApprovalCaseId id)=>Require(id);
+    public PayrollApprovalCaseDto GetCase(PayrollApprovalCaseId id)=>Require(id);
     public PayrollApprovalCaseDto Submit(ApprovalTransitionCommand c)
     {
-        authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalPermission.PAYROLL_SUBMIT);
+        authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalAction.Submit);
         var value=Require(c.ApprovalCaseId); var context=Context(value); var current=artifacts.GetAuthoritativeArtifacts(context);
         ValidatePinned(value,current);
         var validation=review.GetPayrollValidationSummary(context);
         if(!current.CalculationSucceeded || !current.RequiredFundsComplete || validation.Blocking)
             throw Error(DiagnosticCodes.PayrollApprovalSubmitBlocked,("blocking",validation.Blocking));
-        return Transition(value,c,PayrollApprovalStatus.DRAFT,PayrollApprovalStatus.SUBMITTED,null);
+        return Transition(value,c,PayrollApprovalStatus.Draft,PayrollApprovalStatus.Submitted,null);
     }
     public PayrollApprovalCaseDto StartReview(ApprovalTransitionCommand c)
-    { authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalPermission.PAYROLL_REVIEW); return Transition(Require(c.ApprovalCaseId),c,PayrollApprovalStatus.SUBMITTED,PayrollApprovalStatus.IN_REVIEW,null); }
+    { authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalAction.Review); return Transition(Require(c.ApprovalCaseId),c,PayrollApprovalStatus.Submitted,PayrollApprovalStatus.InReview,null); }
     public PayrollApprovalCaseDto Approve(ApprovalTransitionCommand c)
     {
-        authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalPermission.PAYROLL_APPROVE);
+        authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalAction.Approve);
         var value=Require(c.ApprovalCaseId); authorization.ValidateDecisionActors(value,user.UserId);
         var current=artifacts.GetAuthoritativeArtifacts(Context(value)); ValidatePinned(value,current);
         if(!artifacts.IsLatestProductionRevision(current)) throw Error(DiagnosticCodes.PayrollApprovalStaleCase,("snapshotRevision",value.SnapshotRevision));
         if(review.GetPayrollValidationSummary(Context(value)).Blocking) throw Error(DiagnosticCodes.PayrollApprovalApprovalBlocked,("approvalCaseId",value.Id.Value));
-        return Transition(value,c,PayrollApprovalStatus.IN_REVIEW,PayrollApprovalStatus.APPROVED,Optional(c.Reason));
+        return Transition(value,c,PayrollApprovalStatus.InReview,PayrollApprovalStatus.Approved,Optional(c.Reason));
     }
     public PayrollApprovalCaseDto Reject(ApprovalTransitionCommand c)
     {
-        authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalPermission.PAYROLL_REVIEW);
+        authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalAction.Review);
         var reason=Required(c.Reason,DiagnosticCodes.PayrollApprovalRejectionReasonRequired);
-        return Transition(Require(c.ApprovalCaseId),c,PayrollApprovalStatus.IN_REVIEW,PayrollApprovalStatus.REJECTED,reason);
+        return Transition(Require(c.ApprovalCaseId),c,PayrollApprovalStatus.InReview,PayrollApprovalStatus.Rejected,reason);
     }
     public PayrollApprovalCaseDto Lock(ApprovalTransitionCommand c)
     {
-        authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalPermission.PAYROLL_LOCK);
-        var value=Require(c.ApprovalCaseId); if(value.Status==PayrollApprovalStatus.LOCKED)return value;
+        authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalAction.Lock);
+        var value=Require(c.ApprovalCaseId); if(value.Status==PayrollApprovalStatus.Locked)return value;
         var current=artifacts.GetAuthoritativeArtifacts(Context(value)); ValidatePinned(value,current);
         if(!artifacts.IsLatestProductionRevision(current)) throw Error(DiagnosticCodes.PayrollApprovalStaleCase,("snapshotRevision",value.SnapshotRevision));
-        var result=Transition(value,c,PayrollApprovalStatus.APPROVED,PayrollApprovalStatus.LOCKED,Optional(c.Reason));
+        var result=Transition(value,c,PayrollApprovalStatus.Approved,PayrollApprovalStatus.Locked,Optional(c.Reason));
         periodClose.CloseCalculatedPeriod(company.CompanyId,value.PayrollPeriodId); return result;
     }
     public PayrollValidationSummary GetExactReviewContext(PayrollApprovalCaseId id)=>review.GetPayrollValidationSummary(Context(Require(id)));
     public IReadOnlyList<PayrollApprovalEventDto> GetHistory(PayrollApprovalCaseId id){Require(id);return repository.History(company.CompanyId,id);}
     public IReadOnlyList<PayrollApprovalCaseDto> ListRevisions(PayrollPeriodId id)=>repository.List(company.CompanyId,id).OrderBy(x=>x.SnapshotRevision).ToArray();
-    public PayrollApprovalCaseDto? GetCurrentAuthoritative(PayrollPeriodId id)=>repository.List(company.CompanyId,id).Where(x=>x.Status==PayrollApprovalStatus.LOCKED).OrderByDescending(x=>x.SnapshotRevision).FirstOrDefault();
+    public PayrollApprovalCaseDto? GetCurrentAuthoritative(PayrollPeriodId id)=>repository.List(company.CompanyId,id).Where(x=>x.Status==PayrollApprovalStatus.Locked).OrderByDescending(x=>x.SnapshotRevision).FirstOrDefault();
 
     public PayrollAdjustmentRequestDto RequestAdjustment(RequestAdjustmentCommand command)
     {
-        authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalPermission.PAYROLL_ADJUST); RequireKey(command.IdempotencyKey);
+        authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalAction.Adjust); RequireKey(command.IdempotencyKey);
         var reason=Required(command.Reason,DiagnosticCodes.PayrollApprovalAdjustmentReasonRequired); var source=Require(command.SourceApprovalCaseId);
-        if(source.Status is not (PayrollApprovalStatus.APPROVED or PayrollApprovalStatus.REJECTED or PayrollApprovalStatus.LOCKED))
+        if(source.Status is not (PayrollApprovalStatus.Approved or PayrollApprovalStatus.Rejected or PayrollApprovalStatus.Locked))
             throw Error(DiagnosticCodes.PayrollApprovalInvalidTransition,("from",source.Status));
         var fp=Hash(source.Id.Value,command.AdjustmentType,reason); var old=repository.GetAdjustmentByIdempotency(company.CompanyId,"REQUEST_ADJUSTMENT",command.IdempotencyKey);
         if(old is not null) return SameAdjustment(Hash(old.SourceApprovalCaseId.Value,old.AdjustmentType,old.Reason)==fp,old);
         var value=new PayrollAdjustmentRequestDto(PayrollAdjustmentRequestId.From(Guid.NewGuid()),company.CompanyId,source.PayrollPeriodId,
-            source.Id,source.SnapshotId,source.CalculationRunId,command.AdjustmentType,PayrollAdjustmentStatus.REQUESTED,reason,user.UserId,Now(),null,null,null,null,null,correlation.CorrelationId,1);
+            source.Id,source.SnapshotId,source.CalculationRunId,command.AdjustmentType,PayrollAdjustmentStatus.Requested,reason,user.UserId,Now(),null,null,null,null,null,correlation.CorrelationId,1);
         repository.AddAdjustment(value,"REQUEST_ADJUSTMENT",command.IdempotencyKey,fp); return value;
     }
     public PayrollAdjustmentRequestDto AuthorizeAdjustment(PayrollAdjustmentRequestId id,long expectedRevision,string key)
     {
-        authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalPermission.PAYROLL_ADJUST); RequireKey(key);
-        var value=RequireAdjustment(id); if(value.Status==PayrollAdjustmentStatus.AUTHORIZED) return value;
+        authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalAction.Adjust); RequireKey(key);
+        var value=RequireAdjustment(id); if(value.Status==PayrollAdjustmentStatus.Authorized) return value;
         if(value.Revision!=expectedRevision) throw Error(DiagnosticCodes.PayrollApprovalConcurrencyConflict,("expectedRevision",expectedRevision),("actualRevision",value.Revision));
-        if(value.Status!=PayrollAdjustmentStatus.REQUESTED) throw Error(DiagnosticCodes.PayrollApprovalInvalidTransition,("from",value.Status));
-        var next=value with{Status=PayrollAdjustmentStatus.AUTHORIZED,AuthorizedBy=user.UserId,AuthorizedAt=Now(),Revision=value.Revision+1};
+        if(value.Status!=PayrollAdjustmentStatus.Requested) throw Error(DiagnosticCodes.PayrollApprovalInvalidTransition,("from",value.Status));
+        var next=value with{Status=PayrollAdjustmentStatus.Authorized,AuthorizedBy=user.UserId,AuthorizedAt=Now(),Revision=value.Revision+1};
         repository.UpdateAdjustment(next,expectedRevision,"AUTHORIZE_ADJUSTMENT",key,Hash(id.Value)); return next;
     }
     public PayrollAdjustmentRequestDto StartNewRevision(StartRevisionCommand command)
     {
-        authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalPermission.PAYROLL_ADJUST); RequireKey(command.IdempotencyKey);
+        authorization.Demand(company.CompanyId,user.UserId,PayrollApprovalAction.Adjust); RequireKey(command.IdempotencyKey);
         var value=RequireAdjustment(command.AdjustmentRequestId);
-        if(value.Status!=PayrollAdjustmentStatus.AUTHORIZED) throw Error(DiagnosticCodes.PayrollApprovalAdjustmentNotAuthorized,("status",value.Status));
+        if(value.Status!=PayrollAdjustmentStatus.Authorized) throw Error(DiagnosticCodes.PayrollApprovalAdjustmentNotAuthorized,("status",value.Status));
         if(value.Revision!=command.ExpectedRevision) throw Error(DiagnosticCodes.PayrollApprovalConcurrencyConflict,("expectedRevision",command.ExpectedRevision),("actualRevision",value.Revision));
         var started=revisions.StartNewRevision(value);
         if(started.SnapshotRevision<=Require(value.SourceApprovalCaseId).SnapshotRevision) throw Error(DiagnosticCodes.PayrollApprovalApprovalBlocked,("reason","revision-must-increase"));
         var nextCase=Create(new(started.Artifacts,value.SourceApprovalCaseId,command.IdempotencyKey+":approval-case"));
-        var next=value with{Status=PayrollAdjustmentStatus.REVISION_STARTED,NewSnapshotId=started.SnapshotId,NewSnapshotRevision=started.SnapshotRevision,NewApprovalCaseId=nextCase.Id,Revision=value.Revision+1};
+        var next=value with{Status=PayrollAdjustmentStatus.RevisionStarted,NewSnapshotId=started.SnapshotId,NewSnapshotRevision=started.SnapshotRevision,NewApprovalCaseId=nextCase.Id,Revision=value.Revision+1};
         repository.UpdateAdjustment(next,value.Revision,"START_REVISION",command.IdempotencyKey,Hash(value.Id.Value,started.SnapshotId.Value,started.SnapshotRevision)); return next;
     }
 
@@ -118,12 +118,12 @@ public sealed class PayrollApprovalService(ICompanyContext company, ICurrentUser
         if(value.Revision!=c.ExpectedRevision) throw Error(DiagnosticCodes.PayrollApprovalConcurrencyConflict,("expectedRevision",c.ExpectedRevision),("actualRevision",value.Revision));
         if(value.Status!=from) throw Error(DiagnosticCodes.PayrollApprovalInvalidTransition,("from",value.Status),("to",to));
         var at=Now(); var actor=user.UserId; var next=value with{Status=to,Revision=value.Revision+1,CurrentDecisionReason=reason};
-        next=to switch{PayrollApprovalStatus.SUBMITTED=>next with{SubmittedAt=at,SubmittedBy=actor},PayrollApprovalStatus.IN_REVIEW=>next with{ReviewStartedAt=at,ReviewedBy=actor},PayrollApprovalStatus.APPROVED=>next with{ApprovedAt=at,ApprovedBy=actor},PayrollApprovalStatus.REJECTED=>next with{RejectedAt=at,RejectedBy=actor},PayrollApprovalStatus.LOCKED=>next with{LockedAt=at,LockedBy=actor},_=>next};
+        next=to switch{PayrollApprovalStatus.Submitted=>next with{SubmittedAt=at,SubmittedBy=actor},PayrollApprovalStatus.InReview=>next with{ReviewStartedAt=at,ReviewedBy=actor},PayrollApprovalStatus.Approved=>next with{ApprovedAt=at,ApprovedBy=actor},PayrollApprovalStatus.Rejected=>next with{RejectedAt=at,RejectedBy=actor},PayrollApprovalStatus.Locked=>next with{LockedAt=at,LockedBy=actor},_=>next};
         var fp=Hash(value.Id.Value,from,to,reason);
         repository.Update(next,value.Revision,to.ToString(),c.IdempotencyKey,fp);
         repository.Append(new(PayrollApprovalEventId.From(Guid.NewGuid()),value.Id,company.CompanyId,from,to,actor,at,reason,correlation.CorrelationId,c.IdempotencyKey)); return next;
     }
-    private PayrollApprovalCaseDto Require(PayrollApprovalCaseId id)=>repository.Get(company.CompanyId,id)??throw Error(DiagnosticCodes.PayrollApprovalCaseNotFound,("approvalCaseId",id.Value));
+    private PayrollApprovalCaseDto Require(PayrollApprovalCaseId id)=>repository.GetCase(company.CompanyId,id)??throw Error(DiagnosticCodes.PayrollApprovalCaseNotFound,("approvalCaseId",id.Value));
     private PayrollAdjustmentRequestDto RequireAdjustment(PayrollAdjustmentRequestId id)=>repository.GetAdjustment(company.CompanyId,id)??throw Error(DiagnosticCodes.PayrollApprovalCaseNotFound,("adjustmentRequestId",id.Value));
     private static ReviewResultContext Context(PayrollApprovalCaseDto value)=>new(value.CompanyId,value.PayrollPeriodId,value.SnapshotId,value.CalculationRunId);
     private void ValidateArtifacts(ApprovalArtifactContext value){if(value.CompanyId!=company.CompanyId)throw Error(DiagnosticCodes.PayrollApprovalCrossCompanyReference,("companyId",value.CompanyId.Value));if(value.ExecutionMode!=PayrollExecutionMode.Production)throw Error(DiagnosticCodes.PayrollApprovalNonProductionResult,("executionMode",value.ExecutionMode));}
