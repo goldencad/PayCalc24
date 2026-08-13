@@ -21,14 +21,21 @@ public sealed class ProjectDependencyTests
     {
         var project = LoadProject("src/Modules/PayCalc24.FormulaEngine/PayCalc24.FormulaEngine.csproj");
 
-        Assert.Equal(["PayCalc24.Domain"], ProjectReferences(project));
+        Assert.Equal(["PayCalc24.Contracts", "PayCalc24.Domain"], ProjectReferences(project));
         Assert.Empty(PackageReferences(project));
         AssertSourceExcludes(
             "src/Modules/PayCalc24.FormulaEngine",
             "Microsoft.EntityFrameworkCore",
             "Avalonia",
             "System.Net.Http",
-            "PayCalc24.Infrastructure");
+            "PayCalc24.Infrastructure",
+            "Microsoft.CodeAnalysis",
+            "System.Reflection",
+            "DateTime.Now",
+            "DateTime.Today",
+            "Process.Start",
+            "DynamicMethod",
+            "eval(");
     }
 
     [Fact]

@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\..\PayCalc24.Contracts\PayCalc24.Contracts.csproj" />
     <ProjectReference Include="..\..\PayCalc24.Domain\PayCalc24.Domain.csproj" />
   </ItemGroup>
 
