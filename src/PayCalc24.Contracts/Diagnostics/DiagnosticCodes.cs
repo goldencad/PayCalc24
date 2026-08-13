@@ -2,6 +2,19 @@ namespace PayCalc24.Contracts.Diagnostics;
 
 public static class DiagnosticCodes
 {
+    public const string PayrollApprovalCaseNotFound = "PAYROLL_APPROVAL.CASE_NOT_FOUND";
+    public const string PayrollApprovalInvalidTransition = "PAYROLL_APPROVAL.INVALID_STATE_TRANSITION";
+    public const string PayrollApprovalSubmitBlocked = "PAYROLL_APPROVAL.SUBMIT_BLOCKED";
+    public const string PayrollApprovalApprovalBlocked = "PAYROLL_APPROVAL.APPROVAL_BLOCKED";
+    public const string PayrollApprovalRejectionReasonRequired = "PAYROLL_APPROVAL.REJECTION_REASON_REQUIRED";
+    public const string PayrollApprovalLockBlocked = "PAYROLL_APPROVAL.LOCK_BLOCKED";
+    public const string PayrollApprovalCrossCompanyReference = "PAYROLL_APPROVAL.CROSS_COMPANY_REFERENCE";
+    public const string PayrollApprovalConcurrencyConflict = "PAYROLL_APPROVAL.CONCURRENCY_CONFLICT";
+    public const string PayrollApprovalIdempotencyConflict = "PAYROLL_APPROVAL.IDEMPOTENCY_CONFLICT";
+    public const string PayrollApprovalStaleCase = "PAYROLL_APPROVAL.STALE_CASE";
+    public const string PayrollApprovalNonProductionResult = "PAYROLL_APPROVAL.NON_PRODUCTION_RESULT";
+    public const string PayrollApprovalAdjustmentReasonRequired = "PAYROLL_APPROVAL.ADJUSTMENT_REASON_REQUIRED";
+    public const string PayrollApprovalAdjustmentNotAuthorized = "PAYROLL_APPROVAL.ADJUSTMENT_NOT_AUTHORIZED";
     public const string ScenarioNotFound = "SCENARIO.NOT_FOUND";
     public const string ScenarioSnapshotNotFound = "SCENARIO.SNAPSHOT_NOT_FOUND";
     public const string ScenarioBaselineNotFound = "SCENARIO.BASELINE_NOT_FOUND";

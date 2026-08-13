@@ -7,6 +7,17 @@ public sealed class ProjectDependencyTests
     private static readonly string RepositoryRoot = FindRepositoryRoot();
 
     [Fact]
+    public void PayrollApprovalIsWorkflowOnlyAndHistoricalResultsHaveNoMutationApi()
+    {
+        var project=LoadProject("src/Modules/PayCalc24.PayrollApproval/PayCalc24.PayrollApproval.csproj");
+        Assert.Equal(["PayCalc24.Contracts","PayCalc24.Domain"],ProjectReferences(project));
+        AssertSourceExcludes("src/Modules/PayCalc24.PayrollApproval","Avalonia","Microsoft.EntityFrameworkCore","P1","P2","P3","GrossPay","NetPay","PIT","BHXH","UpdateCalculationResult","EditFundResult","EditFrozenSnapshot","ChangeApprovedPayroll","FormulaEngine");
+        var migration=File.ReadAllText(Path.Combine(RepositoryRoot,"src","PayCalc24.Infrastructure.MariaDb","Migrations","20260813170000_Task17PayrollApproval.cs"));
+        foreach(var table in new[]{"PayrollApprovalCases","PayrollApprovalEvents","PayrollAdjustmentRequests"})Assert.Contains($"CREATE TABLE {table}",migration,StringComparison.Ordinal);
+        Assert.Contains("char(36)",migration,StringComparison.Ordinal);Assert.DoesNotContain("decimal(",migration,StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void DomainHasNoProjectOrExternalPackageDependencies()
     {
         var project = LoadProject("src/PayCalc24.Domain/PayCalc24.Domain.csproj");
