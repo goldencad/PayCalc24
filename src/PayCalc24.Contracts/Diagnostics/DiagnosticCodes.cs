@@ -2,6 +2,27 @@ namespace PayCalc24.Contracts.Diagnostics;
 
 public static class DiagnosticCodes
 {
+    public const string PayrollFundDuplicateCode="PAYROLL_FUND.DUPLICATE_CODE";
+    public const string PayrollFundDefinitionNotFound="PAYROLL_FUND.DEFINITION_NOT_FOUND";
+    public const string PayrollFundVersionNotFound="PAYROLL_FUND.VERSION_NOT_FOUND";
+    public const string PayrollFundPublishedImmutable="PAYROLL_FUND.PUBLISHED_IMMUTABLE";
+    public const string PayrollFundInvalidScope="PAYROLL_FUND.INVALID_SCOPE";
+    public const string PayrollFundInvalidSource="PAYROLL_FUND.INVALID_SOURCE";
+    public const string PayrollFundInvalidAllocationMethod="PAYROLL_FUND.INVALID_ALLOCATION_METHOD";
+    public const string PayrollFundEffectiveVersionNotFound="PAYROLL_FUND.EFFECTIVE_VERSION_NOT_FOUND";
+    public const string PayrollFundEffectiveVersionAmbiguous="PAYROLL_FUND.EFFECTIVE_VERSION_AMBIGUOUS";
+    public const string PayrollFundCrossCompanyReference="PAYROLL_FUND.CROSS_COMPANY_REFERENCE";
+    public const string PayrollFundCalculationSnapshotNotFrozen="PAYROLL_FUND_CALCULATION.SNAPSHOT_NOT_FROZEN";
+    public const string PayrollFundCalculationAvailableFundMissing="PAYROLL_FUND_CALCULATION.AVAILABLE_FUND_MISSING";
+    public const string PayrollFundCalculationInvalidRequirement="PAYROLL_FUND_CALCULATION.INVALID_REQUIREMENT";
+    public const string PayrollFundCalculationNegativeRequirement="PAYROLL_FUND_CALCULATION.NEGATIVE_REQUIREMENT";
+    public const string PayrollFundCalculationInvalidCoverage="PAYROLL_FUND_CALCULATION.INVALID_COVERAGE";
+    public const string PayrollFundCalculationAllocationExceedsFund="PAYROLL_FUND_CALCULATION.ALLOCATION_EXCEEDS_FUND";
+    public const string PayrollFundCalculationDuplicateRequirement="PAYROLL_FUND_CALCULATION.DUPLICATE_REQUIREMENT";
+    public const string PayrollFundCalculationDependencyCycle="PAYROLL_FUND_CALCULATION.DEPENDENCY_CYCLE";
+    public const string PayrollFundCalculationIdempotencyConflict="PAYROLL_FUND_CALCULATION.IDEMPOTENCY_CONFLICT";
+    public const string PayrollFundCalculationConcurrentAllocation="PAYROLL_FUND_CALCULATION.CONCURRENT_ALLOCATION";
+    public const string PayrollFundCalculationUnsupportedMethod="PAYROLL_FUND_CALCULATION.UNSUPPORTED_METHOD";
     public const string PayrollCalculationSnapshotNotFrozen = "PAYROLL_CALCULATION.SNAPSHOT_NOT_FROZEN";
     public const string PayrollCalculationSnapshotHashInvalid = "PAYROLL_CALCULATION.SNAPSHOT_HASH_INVALID";
     public const string PayrollCalculationRunAlreadyExists = "PAYROLL_CALCULATION.RUN_ALREADY_EXISTS";

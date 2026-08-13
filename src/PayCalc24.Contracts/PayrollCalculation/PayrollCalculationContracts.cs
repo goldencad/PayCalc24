@@ -4,6 +4,7 @@ using PayCalc24.Contracts.FormulaRepository;
 using PayCalc24.Contracts.Identity;
 using PayCalc24.Contracts.Organization;
 using PayCalc24.Contracts.PayrollInput;
+using PayCalc24.Contracts.PayrollFunds;
 
 namespace PayCalc24.Contracts.PayrollCalculation;
 
@@ -92,7 +93,8 @@ public sealed record SnapshotPolicyConfiguration(
     IReadOnlyList<SnapshotFormulaVersion> FormulaVersions,
     IReadOnlyList<SnapshotParameterVersion> ParameterVersions,
     IReadOnlyList<SnapshotLookupVersion> LookupVersions,
-    IReadOnlyList<SnapshotRuleSetVersion> RuleSetVersions);
+    IReadOnlyList<SnapshotRuleSetVersion> RuleSetVersions,
+    IReadOnlyList<SnapshotPayrollFundVersion>? FundVersions=null);
 
 public sealed record PayrollCalculationSnapshotDto(
     PayrollCalculationSnapshotId Id, CompanyId CompanyId, PayrollPeriodId PayrollPeriodId,
@@ -182,6 +184,7 @@ public interface IPayrollSnapshotQueryService
     IReadOnlyList<SnapshotParameterVersion> GetParameterVersions(CompanyId companyId, PayrollCalculationSnapshotId snapshotId);
     IReadOnlyList<SnapshotLookupVersion> GetLookupVersions(CompanyId companyId, PayrollCalculationSnapshotId snapshotId);
     IReadOnlyList<SnapshotRuleSetVersion> GetRuleSetVersions(CompanyId companyId, PayrollCalculationSnapshotId snapshotId);
+    IReadOnlyList<SnapshotPayrollFundVersion> GetFundVersions(CompanyId companyId, PayrollCalculationSnapshotId snapshotId);
 }
 
 public static class PayrollAuditActions

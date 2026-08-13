@@ -4,6 +4,7 @@
     <ProjectReference Include="..\..\PayCalc24.Domain\PayCalc24.Domain.csproj" />
     <ProjectReference Include="..\..\PayCalc24.Contracts\PayCalc24.Contracts.csproj" />
     <ProjectReference Include="..\PayCalc24.FormulaEngine\PayCalc24.FormulaEngine.csproj" />
+    <ProjectReference Include="..\PayCalc24.PayrollFunds\PayCalc24.PayrollFunds.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

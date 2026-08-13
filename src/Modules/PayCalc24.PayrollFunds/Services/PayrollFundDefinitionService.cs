@@ -1,0 +1,27 @@
+using PayCalc24.Contracts.Diagnostics;
+using PayCalc24.Contracts.Identity;
+using PayCalc24.Contracts.PayrollFunds;
+using PayCalc24.PayrollFunds.Model;
+
+namespace PayCalc24.PayrollFunds.Services;
+
+public sealed class PayrollFundDefinitionService(ICompanyContext companyContext,ICurrentUser currentUser,TimeProvider timeProvider):IPayrollFundDefinitionService
+{
+    private readonly List<PayrollFundVersion> versions=[]; private readonly Lock gate=new();
+    public ValueTask<PayrollFundVersionDto> CreateDraftAsync(CreatePayrollFundDraft c,CancellationToken token=default)
+    { Scope(c.CompanyId);lock(gate){var code=PayrollFundVersion.NormalizeCode(c.Code);if(versions.Any(x=>x.CompanyId==c.CompanyId&&StringComparer.OrdinalIgnoreCase.Equals(x.Code,code)))PayrollFundVersion.Throw(DiagnosticCodes.PayrollFundDuplicateCode);var item=new PayrollFundVersion(PayrollFundVersionId.From(Guid.NewGuid()),PayrollFundDefinitionId.From(Guid.NewGuid()),c.CompanyId,code,1,c,timeProvider.GetUtcNow(),currentUser.UserId);ValidateParent(item,c.ParentFundDefinitionId);versions.Add(item);return ValueTask.FromResult(item.ToDto());} }
+    public ValueTask<PayrollFundVersionDto> UpdateDraftAsync(UpdatePayrollFundDraft c,CancellationToken token=default)
+    {Scope(c.CompanyId);lock(gate){var item=Find(c.CompanyId,c.VersionId);ValidateParent(item,c.ParentFundDefinitionId);item.Update(c);return ValueTask.FromResult(item.ToDto());}}
+    public ValueTask<PayrollFundVersionDto> CreateRevisionAsync(CompanyId companyId,PayrollFundVersionId basedOn,CancellationToken token=default)
+    {Scope(companyId);lock(gate){var old=Find(companyId,basedOn);if(old.LifecycleStatus==FundLifecycleStatus.DRAFT)PayrollFundVersion.Throw(DiagnosticCodes.PayrollFundPublishedImmutable);var dto=old.ToDto();var c=new CreatePayrollFundDraft(companyId,dto.Code,dto.Name,dto.Description,dto.FundType,dto.Scope,dto.Source,dto.Policy,dto.EffectiveFrom,dto.EffectiveTo,dto.CurrencyCode,dto.ParentFundDefinitionId);var next=new PayrollFundVersion(PayrollFundVersionId.From(Guid.NewGuid()),old.DefinitionId,companyId,old.Code,versions.Where(x=>x.DefinitionId==old.DefinitionId).Max(x=>x.Revision)+1,c,timeProvider.GetUtcNow(),currentUser.UserId);versions.Add(next);return ValueTask.FromResult(next.ToDto());}}
+    public ValueTask<PayrollFundVersionDto> PublishAsync(CompanyId companyId,PayrollFundVersionId id,CancellationToken token=default)
+    {Scope(companyId);lock(gate){var item=Find(companyId,id);if(versions.Any(x=>x.DefinitionId==item.DefinitionId&&x.Id!=id&&x.LifecycleStatus==FundLifecycleStatus.PUBLISHED&&Overlaps(x,item)))PayrollFundVersion.Throw(DiagnosticCodes.PayrollFundEffectiveVersionAmbiguous);item.Publish(timeProvider.GetUtcNow(),currentUser.UserId);return ValueTask.FromResult(item.ToDto());}}
+    public ValueTask<PayrollFundVersionDto> RetireAsync(CompanyId companyId,PayrollFundVersionId id,DateOnly effectiveTo,CancellationToken token=default){Scope(companyId);lock(gate){var item=Find(companyId,id);item.Retire(effectiveTo);return ValueTask.FromResult(item.ToDto());}}
+    public PayrollFundVersionDto GetVersion(CompanyId c,PayrollFundVersionId id){Scope(c);return Find(c,id).ToDto();}
+    public PayrollFundVersionDto ResolveEffective(CompanyId c,string code,DateOnly businessDate){Scope(c);var found=versions.Where(x=>x.CompanyId==c&&StringComparer.OrdinalIgnoreCase.Equals(x.Code,PayrollFundVersion.NormalizeCode(code))&&x.LifecycleStatus is FundLifecycleStatus.PUBLISHED or FundLifecycleStatus.RETIRED&&x.EffectiveFrom<=businessDate&&(x.EffectiveTo is null||businessDate<x.EffectiveTo)).ToArray();if(found.Length==0)PayrollFundVersion.Throw(DiagnosticCodes.PayrollFundEffectiveVersionNotFound);if(found.Length>1)PayrollFundVersion.Throw(DiagnosticCodes.PayrollFundEffectiveVersionAmbiguous);return found[0].ToDto();}
+    public IReadOnlyList<PayrollFundVersionDto> Search(CompanyId c,string? code=null,FundLifecycleStatus? status=null){Scope(c);return versions.Where(x=>x.CompanyId==c&&(code is null||StringComparer.OrdinalIgnoreCase.Equals(x.Code,code))&&(status is null||x.LifecycleStatus==status)).OrderBy(x=>x.Code,StringComparer.Ordinal).ThenBy(x=>x.Revision).Select(x=>x.ToDto()).ToArray();}
+    private PayrollFundVersion Find(CompanyId c,PayrollFundVersionId id){var any=versions.SingleOrDefault(x=>x.Id==id)??throw new PayrollFundException(new(DiagnosticCodes.PayrollFundVersionNotFound,DiagnosticSeverity.Error,new Dictionary<string,object?>()));if(any.CompanyId!=c)PayrollFundVersion.Throw(DiagnosticCodes.PayrollFundCrossCompanyReference);return any;}
+    private void ValidateParent(PayrollFundVersion child,PayrollFundDefinitionId? parent){if(parent is null)return;var p=versions.FirstOrDefault(x=>x.DefinitionId==parent)??throw new PayrollFundException(new(DiagnosticCodes.PayrollFundDefinitionNotFound,DiagnosticSeverity.Error,new Dictionary<string,object?>()));if(p.CompanyId!=child.CompanyId)PayrollFundVersion.Throw(DiagnosticCodes.PayrollFundCrossCompanyReference);for(var cursor=p;cursor.ParentFundDefinitionId is not null;){if(cursor.DefinitionId==child.DefinitionId)PayrollFundVersion.Throw(DiagnosticCodes.PayrollFundCalculationDependencyCycle);cursor=versions.First(x=>x.DefinitionId==cursor.ParentFundDefinitionId);}}
+    private static bool Overlaps(PayrollFundVersion a,PayrollFundVersion b)=>a.EffectiveFrom<(b.EffectiveTo??DateOnly.MaxValue)&&b.EffectiveFrom<(a.EffectiveTo??DateOnly.MaxValue);
+    private void Scope(CompanyId c){if(c!=companyContext.CompanyId)PayrollFundVersion.Throw(DiagnosticCodes.CompanyScopeMismatch);}
+}

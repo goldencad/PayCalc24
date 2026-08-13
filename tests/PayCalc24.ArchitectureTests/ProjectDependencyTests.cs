@@ -205,10 +205,24 @@ public sealed class ProjectDependencyTests
         AssertSourceExcludes("src/Modules/PayCalc24.PayrollCalculation",
             "Avalonia", "Microsoft.EntityFrameworkCore", "System.Net.Http", "Odoo", "iBHXH",
             "DateTime.Now", "DateTime.Today", "GetCurrent(", "GetLatest(", "CalculateGross", "CalculateNet",
-            "component.Code ==", "float ", "double ");
+            "component.Code ==", "P3Fund", "P3Coverage", "P3Allocation", "fund.Code ==", "float ", "double ");
         var migration=File.ReadAllText(Path.Combine(RepositoryRoot,"src","PayCalc24.Infrastructure.MariaDb","Migrations","20260813100000_Task10PayrollCalculationResults.cs"));
         foreach(var table in new[]{"PayrollCalculationRuns","PayrollSubjectCalculationResults","PayComponentCalculationResults","CalculationInputProvenance"})Assert.Contains($"CREATE TABLE {table}",migration,StringComparison.Ordinal);
         Assert.Contains("decimal(28,8)",migration,StringComparison.Ordinal);Assert.DoesNotContain(" float",migration,StringComparison.OrdinalIgnoreCase);Assert.DoesNotContain(" double",migration,StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void PayrollFundsAreGenericPinnedDecimalAndStatutoryFree()
+    {
+        AssertSourceExcludes("src/Modules/PayCalc24.PayrollFunds",
+            "Avalonia", "Microsoft.EntityFrameworkCore", "System.Net.Http", "Odoo", "iBHXH",
+            "DateTime.Now", "DateTime.Today", "GetCurrent(", "GetLatest(", "P3Fund", "P3Coverage",
+            "CalculateGross", "CalculateNet", "PIT", "BHXH", "float ", "double ");
+        var migration=File.ReadAllText(Path.Combine(RepositoryRoot,"src","PayCalc24.Infrastructure.MariaDb","Migrations","20260813110000_Task11PayrollFunds.cs"));
+        foreach(var table in new[]{"PayrollFundDefinitions","PayrollFundVersions","PayrollSnapshotFundVersions","PayrollFundAllocationResults","PayrollFundMemberAllocationResults"})Assert.Contains($"CREATE TABLE {table}",migration,StringComparison.Ordinal);
+        Assert.Contains("decimal(28,8)",migration,StringComparison.Ordinal);Assert.DoesNotContain(" float",migration,StringComparison.OrdinalIgnoreCase);Assert.DoesNotContain(" double",migration,StringComparison.OrdinalIgnoreCase);
+        var contracts=File.ReadAllText(Path.Combine(RepositoryRoot,"src","PayCalc24.Contracts","PayrollFunds","PayrollFundContracts.cs"));
+        Assert.Contains("SnapshotPayrollFundVersion",contracts,StringComparison.Ordinal);Assert.Contains("FundAllocationResultDto",contracts,StringComparison.Ordinal);Assert.DoesNotContain("P3",contracts,StringComparison.Ordinal);
     }
 
     [Fact]

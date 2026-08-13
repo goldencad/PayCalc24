@@ -7,6 +7,7 @@ using PayCalc24.Contracts.Compensation;
 using PayCalc24.Infrastructure.MariaDb.Compensation;
 using PayCalc24.Infrastructure.MariaDb.PayrollInput;
 using PayCalc24.Infrastructure.MariaDb.FormulaRepository;
+using PayCalc24.Infrastructure.MariaDb.PayrollFunds;
 
 namespace PayCalc24.Infrastructure.MariaDb.Organization;
 
@@ -33,6 +34,10 @@ public sealed class PayCalc24DbContext(DbContextOptions<PayCalc24DbContext> opti
     internal DbSet<LookupRow> LookupRows => Set<LookupRow>();
     internal DbSet<RuleSetVersionRow> RuleSetVersions => Set<RuleSetVersionRow>();
     internal DbSet<RuleRow> Rules => Set<RuleRow>();
+    internal DbSet<PayrollFundDefinitionRow> PayrollFundDefinitions => Set<PayrollFundDefinitionRow>();
+    internal DbSet<PayrollFundVersionRow> PayrollFundVersions => Set<PayrollFundVersionRow>();
+    internal DbSet<PayrollFundAllocationResultRow> PayrollFundAllocationResults => Set<PayrollFundAllocationResultRow>();
+    internal DbSet<PayrollFundMemberAllocationResultRow> PayrollFundMemberAllocationResults => Set<PayrollFundMemberAllocationResultRow>();
     protected override void OnModelCreating(ModelBuilder modelBuilder) => modelBuilder.ApplyConfigurationsFromAssembly(typeof(PayCalc24DbContext).Assembly);
 }
 
