@@ -2,6 +2,22 @@ namespace PayCalc24.Contracts.Diagnostics;
 
 public static class DiagnosticCodes
 {
+    public const string PayrollCalculationSnapshotNotFrozen = "PAYROLL_CALCULATION.SNAPSHOT_NOT_FROZEN";
+    public const string PayrollCalculationSnapshotHashInvalid = "PAYROLL_CALCULATION.SNAPSHOT_HASH_INVALID";
+    public const string PayrollCalculationRunAlreadyExists = "PAYROLL_CALCULATION.RUN_ALREADY_EXISTS";
+    public const string PayrollCalculationConcurrentRun = "PAYROLL_CALCULATION.CONCURRENT_RUN";
+    public const string PayrollCalculationSchemeMissing = "PAYROLL_CALCULATION.COMPENSATION_SCHEME_MISSING";
+    public const string PayrollCalculationComponentInvalid = "PAYROLL_CALCULATION.COMPONENT_CONFIGURATION_INVALID";
+    public const string PayrollCalculationUnsupportedMethod = "PAYROLL_CALCULATION.UNSUPPORTED_CALCULATION_METHOD";
+    public const string PayrollCalculationRequiredInputMissing = "PAYROLL_CALCULATION.REQUIRED_INPUT_MISSING";
+    public const string PayrollCalculationFormulaVersionMissing = "PAYROLL_CALCULATION.FORMULA_VERSION_MISSING";
+    public const string PayrollCalculationDependencyCycle = "PAYROLL_CALCULATION.COMPONENT_DEPENDENCY_CYCLE";
+    public const string PayrollCalculationDependencyMissing = "PAYROLL_CALCULATION.COMPONENT_DEPENDENCY_MISSING";
+    public const string PayrollCalculationResultTypeMismatch = "PAYROLL_CALCULATION.RESULT_TYPE_MISMATCH";
+    public const string PayrollCalculationSubjectFailed = "PAYROLL_CALCULATION.SUBJECT_FAILED";
+    public const string PayrollCalculationRunFailed = "PAYROLL_CALCULATION.RUN_FAILED";
+    public const string PayrollCalculationIdempotencyConflict = "PAYROLL_CALCULATION.IDEMPOTENCY_CONFLICT";
+    public const string PayrollCalculationCrossCompanyReference = "PAYROLL_CALCULATION.CROSS_COMPANY_REFERENCE";
     public const string CompanyScopeMismatch = "CORE.COMPANY_SCOPE_MISMATCH";
     public const string LocalizationResourceMissing = "PRESENTATION.LOCALIZATION_RESOURCE_MISSING";
     public const string UnsupportedCulture = "PRESENTATION.UNSUPPORTED_CULTURE";

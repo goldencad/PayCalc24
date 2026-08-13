@@ -200,6 +200,18 @@ public sealed class ProjectDependencyTests
     }
 
     [Fact]
+    public void PayrollCalculationUsesOnlySnapshotAndSafeEngineBoundaries()
+    {
+        AssertSourceExcludes("src/Modules/PayCalc24.PayrollCalculation",
+            "Avalonia", "Microsoft.EntityFrameworkCore", "System.Net.Http", "Odoo", "iBHXH",
+            "DateTime.Now", "DateTime.Today", "GetCurrent(", "GetLatest(", "CalculateGross", "CalculateNet",
+            "component.Code ==", "float ", "double ");
+        var migration=File.ReadAllText(Path.Combine(RepositoryRoot,"src","PayCalc24.Infrastructure.MariaDb","Migrations","20260813100000_Task10PayrollCalculationResults.cs"));
+        foreach(var table in new[]{"PayrollCalculationRuns","PayrollSubjectCalculationResults","PayComponentCalculationResults","CalculationInputProvenance"})Assert.Contains($"CREATE TABLE {table}",migration,StringComparison.Ordinal);
+        Assert.Contains("decimal(28,8)",migration,StringComparison.Ordinal);Assert.DoesNotContain(" float",migration,StringComparison.OrdinalIgnoreCase);Assert.DoesNotContain(" double",migration,StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void AvaloniaXamlDoesNotHardCodePresentationContentOrSvgPaths()
     {
         var clientDirectory = Path.Combine(RepositoryRoot, "src", "PayCalc24.Client.Avalonia");

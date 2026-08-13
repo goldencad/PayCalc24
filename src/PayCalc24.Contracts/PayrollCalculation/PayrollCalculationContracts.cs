@@ -12,9 +12,26 @@ public readonly record struct PayrollCalculationSnapshotId(Guid Value)
     public static PayrollCalculationSnapshotId From(Guid value) => value == Guid.Empty
         ? throw new ArgumentException("Identifier cannot be empty.", nameof(value)) : new(value);
 }
+public readonly record struct PayrollCalculationRunId(Guid Value)
+{
+    public static PayrollCalculationRunId From(Guid value) => value == Guid.Empty
+        ? throw new ArgumentException("Identifier cannot be empty.", nameof(value)) : new(value);
+}
+public readonly record struct PayrollSubjectCalculationResultId(Guid Value)
+{
+    public static PayrollSubjectCalculationResultId From(Guid value) => value == Guid.Empty
+        ? throw new ArgumentException("Identifier cannot be empty.", nameof(value)) : new(value);
+}
+public readonly record struct PayComponentCalculationResultId(Guid Value)
+{
+    public static PayComponentCalculationResultId From(Guid value) => value == Guid.Empty
+        ? throw new ArgumentException("Identifier cannot be empty.", nameof(value)) : new(value);
+}
 
 public enum PayrollPeriodStatus { DRAFT, PREPARED, FROZEN, CALCULATED, CLOSED, REOPENED }
 public enum PayrollExecutionMode { Production, Replay, BackTest, WhatIf }
+public enum PayrollCalculationRunStatus { PENDING, RUNNING, SUCCEEDED, FAILED }
+public enum PayrollCalculationResultStatus { SUCCEEDED, FAILED }
 
 /// <summary>PeriodStart and PeriodEnd are inclusive payroll coverage dates. BusinessDate resolves half-open configuration intervals.</summary>
 public sealed record PayrollPeriodDto(
@@ -56,9 +73,11 @@ public sealed record SnapshotResolvedInput(
 public sealed record SnapshotCompensationVersion(CompensationSchemeId CompensationSchemeId,
     int SchemeVersion, IReadOnlyList<SnapshotPayComponentVersion> Components);
 public sealed record SnapshotPayComponentVersion(PayComponentId PayComponentId, int Version, int Sequence,
-    CalculationMethod CalculationMethod, FormulaDefinitionId? FormulaDefinitionId);
+    CalculationMethod CalculationMethod, FormulaDefinitionId? FormulaDefinitionId,
+    string? ComponentCode = null, bool Required = true, string? SourceReference = null,
+    string? ExpectedDataType = null, IReadOnlyList<PayComponentId>? DependsOn = null);
 public sealed record SnapshotFormulaVersion(FormulaDefinitionId FormulaDefinitionId, FormulaVersionId FormulaVersionId,
-    int Revision, string Checksum);
+    int Revision, string Checksum, string? Expression = null);
 public sealed record SnapshotParameterVersion(ParameterSetVersionId ParameterSetVersionId, string Code, int Revision,
     IReadOnlyList<ParameterValueDto> Values);
 public sealed record SnapshotLookupVersion(LookupTableVersionId LookupTableVersionId, string Code, int Revision,
@@ -81,6 +100,49 @@ public sealed record PayrollCalculationSnapshotDto(
     DateTimeOffset CreatedAt, UserId CreatedBy, DateTimeOffset FrozenAt, UserId FrozenBy,
     string PopulationHash, string InputHash, string ConfigurationHash, string SnapshotHash,
     SnapshotHistoricalFacts HistoricalFacts, SnapshotPolicyConfiguration PolicyConfiguration);
+
+public sealed record StartPayrollCalculation(CompanyId CompanyId, PayrollCalculationSnapshotId SnapshotId,
+    PayrollExecutionMode ExecutionMode, string IdempotencyKey, string? ExpectedSnapshotHash = null,
+    SnapshotPolicyConfiguration? AlternativePolicy = null);
+
+public sealed record PayrollCalculationRunDto(PayrollCalculationRunId Id, CompanyId CompanyId,
+    PayrollPeriodId PayrollPeriodId, PayrollCalculationSnapshotId SnapshotId, int SnapshotRevision,
+    PayrollExecutionMode ExecutionMode, string EngineVersion, PayrollCalculationRunStatus Status,
+    DateTimeOffset StartedAt, UserId StartedBy, DateTimeOffset? CompletedAt, UserId? CompletedBy,
+    string CorrelationId, string IdempotencyKey, string SnapshotHash, string? ResultHash,
+    string? FailureDiagnosticCode, bool IsAuthoritative);
+
+public sealed record PayComponentCalculationResultDto(PayComponentCalculationResultId Id,
+    PayrollCalculationRunId CalculationRunId, CompanyId CompanyId, PayrollPeriodId PayrollPeriodId,
+    PayrollCalculationSnapshotId SnapshotId, PayrollSubjectId PayrollSubjectId,
+    CompensationSchemeId CompensationSchemeVersionId, PayComponentId PayComponentId, int PayComponentVersion,
+    string ComponentCode, int Sequence, CalculationMethod CalculationMethod,
+    PayrollCalculationResultStatus Status, PayrollInputValue? ResultValue, string? ResultDataType,
+    FormulaDefinitionId? FormulaDefinitionId, FormulaVersionId? FormulaVersionId, string? FormulaChecksum,
+    string? ExplainTraceJson, string? DiagnosticCode,
+    IReadOnlyList<PayrollInputLedgerEntryId> InputLedgerEntryIds,
+    IReadOnlyList<ParameterSetVersionId> ParameterSetVersionIds,
+    IReadOnlyList<LookupTableVersionId> LookupTableVersionIds,
+    IReadOnlyList<RuleSetVersionId> RuleSetVersionIds,
+    string EngineVersion, PayrollExecutionMode ExecutionMode, string CorrelationId,
+    string ResultHash, DateTimeOffset CreatedAt);
+
+public sealed record PayrollSubjectCalculationResultDto(PayrollSubjectCalculationResultId Id,
+    PayrollCalculationRunId CalculationRunId, CompanyId CompanyId, PayrollSubjectId PayrollSubjectId,
+    string EmployeeCode, int ComponentResultCount, PayrollCalculationResultStatus CalculationStatus,
+    string ResultHash, string? DiagnosticCode, DateTimeOffset CreatedAt);
+
+public interface IPayrollCalculationService
+{
+    ValueTask<PayrollCalculationRunDto> StartAsync(StartPayrollCalculation command, CancellationToken token = default);
+    PayrollCalculationRunDto GetRun(CompanyId companyId, PayrollCalculationRunId runId);
+    PayrollCalculationRunDto? ResolveByIdempotencyKey(CompanyId companyId, PayrollCalculationSnapshotId snapshotId, string idempotencyKey);
+    PayrollCalculationRunDto? GetAuthoritativeResult(CompanyId companyId, PayrollCalculationSnapshotId snapshotId);
+    IReadOnlyList<PayrollSubjectCalculationResultDto> ListSubjectResults(CompanyId companyId, PayrollCalculationRunId runId);
+    PayrollSubjectCalculationResultDto GetSubjectResult(CompanyId companyId, PayrollCalculationRunId runId, PayrollSubjectId subjectId);
+    IReadOnlyList<PayComponentCalculationResultDto> ListComponentResults(CompanyId companyId, PayrollCalculationRunId runId, PayrollSubjectId? subjectId = null);
+    PayComponentCalculationResultDto GetComponentResult(CompanyId companyId, PayComponentCalculationResultId resultId);
+}
 
 /// <summary>Resolved candidate package. Implementations read canonical Task 04-07 contracts; the state machine validates and freezes it.</summary>
 public sealed record PayrollSnapshotCandidate(CompanyId CompanyId, SnapshotHistoricalFacts HistoricalFacts,
