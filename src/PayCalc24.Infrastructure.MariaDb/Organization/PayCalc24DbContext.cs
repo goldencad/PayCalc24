@@ -6,6 +6,7 @@ using PayCalc24.Organization.Model;
 using PayCalc24.Contracts.Compensation;
 using PayCalc24.Infrastructure.MariaDb.Compensation;
 using PayCalc24.Infrastructure.MariaDb.PayrollInput;
+using PayCalc24.Infrastructure.MariaDb.FormulaRepository;
 
 namespace PayCalc24.Infrastructure.MariaDb.Organization;
 
@@ -22,6 +23,16 @@ public sealed class PayCalc24DbContext(DbContextOptions<PayCalc24DbContext> opti
     internal DbSet<CompensationSchemeComponentRow> CompensationSchemeComponents => Set<CompensationSchemeComponentRow>();
     internal DbSet<PayrollInputDefinitionVersionRow> PayrollInputDefinitionVersions => Set<PayrollInputDefinitionVersionRow>();
     internal DbSet<PayrollInputLedgerEntryRow> PayrollInputLedgerEntries => Set<PayrollInputLedgerEntryRow>();
+    internal DbSet<FormulaDefinitionRow> FormulaDefinitions => Set<FormulaDefinitionRow>();
+    internal DbSet<FormulaVersionRow> FormulaVersions => Set<FormulaVersionRow>();
+    internal DbSet<FormulaDependencyRow> FormulaDependencies => Set<FormulaDependencyRow>();
+    internal DbSet<FormulaTestCaseRow> FormulaTestCases => Set<FormulaTestCaseRow>();
+    internal DbSet<ParameterSetVersionRow> ParameterSetVersions => Set<ParameterSetVersionRow>();
+    internal DbSet<ParameterValueRow> ParameterValues => Set<ParameterValueRow>();
+    internal DbSet<LookupTableVersionRow> LookupTableVersions => Set<LookupTableVersionRow>();
+    internal DbSet<LookupRow> LookupRows => Set<LookupRow>();
+    internal DbSet<RuleSetVersionRow> RuleSetVersions => Set<RuleSetVersionRow>();
+    internal DbSet<RuleRow> Rules => Set<RuleRow>();
     protected override void OnModelCreating(ModelBuilder modelBuilder) => modelBuilder.ApplyConfigurationsFromAssembly(typeof(PayCalc24DbContext).Assembly);
 }
 

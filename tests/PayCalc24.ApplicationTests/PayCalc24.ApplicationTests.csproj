@@ -12,6 +12,7 @@
     <ProjectReference Include="../../src/Modules/PayCalc24.Organization/PayCalc24.Organization.csproj" />
     <ProjectReference Include="../../src/Modules/PayCalc24.Compensation/PayCalc24.Compensation.csproj" />
     <ProjectReference Include="../../src/Modules/PayCalc24.PayrollInput/PayCalc24.PayrollInput.csproj" />
+    <ProjectReference Include="..\..\src\Modules\PayCalc24.FormulaRepository\PayCalc24.FormulaRepository.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />

@@ -15,3 +15,5 @@ dotnet test PayCalc24.sln --no-build
 The solution structure and dependency rules are documented in `docs/adr` and enforced by `PayCalc24.ArchitectureTests`.
 
 Payroll inputs from manual and provider sources cross one canonical, company-scoped `PayrollInputDefinition` and append-only ledger boundary. Corrections append superseding entries, and the future Formula Engine consumes the deterministic effective ledger view rather than querying source-system storage.
+
+The company-scoped Formula Repository persists versioned formula source, declared dependencies, parameters, lookup rows, rule rows, and expected test cases. It enforces the explicit `DRAFT → VALIDATED → TESTED → APPROVED → PUBLISHED → RETIRED` lifecycle and half-open effective dating. It stores policy definitions only; the Formula Engine introduced in a later task will parse and execute them.

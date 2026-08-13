@@ -150,6 +150,39 @@ public sealed class ProjectDependencyTests
     }
 
     [Fact]
+    public void FormulaRepositoryIsDataOnlyAndHasNoRuntimeEvaluatorOrPublishedMutationApi()
+    {
+        var project = LoadProject("src/Modules/PayCalc24.FormulaRepository/PayCalc24.FormulaRepository.csproj");
+        Assert.Equal(["PayCalc24.Contracts", "PayCalc24.Domain"], ProjectReferences(project));
+        Assert.Empty(PackageReferences(project));
+        AssertSourceExcludes(
+            "src/Modules/PayCalc24.FormulaRepository",
+            "Microsoft.EntityFrameworkCore", "Avalonia", "Microsoft.CodeAnalysis", "Python",
+            "JavaScript", "eval(", "Compile(", "DynamicMethod", "System.Net.Http",
+            "AttendanceRecord", "Odoo", "iBHXH", "TaxOnline", "UpdatePublished", "DeletePublished");
+
+        var contracts = File.ReadAllText(Path.Combine(
+            RepositoryRoot, "src", "PayCalc24.Contracts", "FormulaRepository", "FormulaRepositoryContracts.cs"));
+        Assert.DoesNotContain("Evaluate", contracts, StringComparison.Ordinal);
+        Assert.DoesNotContain("FunctionCatalog", contracts, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void FormulaRepositoryPersistenceUsesRelationalTablesUuidAndDecimalColumns()
+    {
+        var migration = File.ReadAllText(Path.Combine(
+            RepositoryRoot, "src", "PayCalc24.Infrastructure.MariaDb", "Migrations", "20260813070000_Task07DynamicFormulaRepository.cs"));
+        foreach (var table in new[] { "FormulaDefinitions", "FormulaVersions", "FormulaDependencies", "FormulaTestCases", "ParameterSetVersions", "ParameterValues", "LookupTableVersions", "LookupRows", "RuleSetVersions", "Rules" })
+        {
+            Assert.Contains($"CREATE TABLE {table}", migration, StringComparison.Ordinal);
+        }
+        Assert.Contains("char(36)", migration, StringComparison.Ordinal);
+        Assert.Contains("decimal(28,8)", migration, StringComparison.Ordinal);
+        Assert.DoesNotContain(" float", migration, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(" double", migration, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void AvaloniaXamlDoesNotHardCodePresentationContentOrSvgPaths()
     {
         var clientDirectory = Path.Combine(RepositoryRoot, "src", "PayCalc24.Client.Avalonia");
