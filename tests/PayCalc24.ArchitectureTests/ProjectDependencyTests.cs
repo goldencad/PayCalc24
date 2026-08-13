@@ -314,6 +314,28 @@ public sealed class ProjectDependencyTests
         }
     }
 
+    [Fact]
+    public void ScenariosAreIsolatedOrchestrationAndContainNoAlternateEngine()
+    {
+        var project=LoadProject("src/Modules/PayCalc24.Scenarios/PayCalc24.Scenarios.csproj");
+        Assert.Equal(["PayCalc24.Contracts","PayCalc24.Domain"],ProjectReferences(project));
+        Assert.Empty(PackageReferences(project));
+        AssertSourceExcludes("src/Modules/PayCalc24.Scenarios",
+            "BackTestEngine","SimulationEngine","ReplayEngine","WhatIfEngine","SafeFormulaEngine",
+            "Microsoft.EntityFrameworkCore","Avalonia","PayCalc24.Attendance","PayCalc24.Performance",
+            "DateTime.Now","DateTime.Today","GetCurrent(","GetLatest(","P1","P2","P3",
+            "Gross","NetPay","PIT","BHXH","float ","double ");
+        var source=File.ReadAllText(Path.Combine(RepositoryRoot,"src","Modules","PayCalc24.Scenarios","Services","ScenarioService.cs"));
+        Assert.Contains("IPayrollCalculationService",source,StringComparison.Ordinal);
+        Assert.Contains("IPayrollFundCalculationService",source,StringComparison.Ordinal);
+        Assert.Contains("IPayrollReviewService",source,StringComparison.Ordinal);
+        var migration=File.ReadAllText(Path.Combine(RepositoryRoot,"src","PayCalc24.Infrastructure.MariaDb","Migrations","20260813160000_Task16Scenarios.cs"));
+        foreach(var table in new[]{"ScenarioDefinitions","ScenarioSnapshots","ScenarioPolicyOverrides","ScenarioInputOverrides","ScenarioExecutions"}) Assert.Contains($"CREATE TABLE {table}",migration,StringComparison.Ordinal);
+        Assert.Contains("CHAR(36)",migration,StringComparison.Ordinal);
+        Assert.DoesNotContain(" FLOAT",migration,StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(" DOUBLE",migration,StringComparison.OrdinalIgnoreCase);
+    }
+
     private static XDocument LoadProject(string relativePath) =>
         XDocument.Load(Path.Combine(RepositoryRoot, relativePath));
 

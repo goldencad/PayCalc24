@@ -105,7 +105,8 @@ public sealed record PayrollCalculationSnapshotDto(
 
 public sealed record StartPayrollCalculation(CompanyId CompanyId, PayrollCalculationSnapshotId SnapshotId,
     PayrollExecutionMode ExecutionMode, string IdempotencyKey, string? ExpectedSnapshotHash = null,
-    SnapshotPolicyConfiguration? AlternativePolicy = null);
+    SnapshotPolicyConfiguration? AlternativePolicy = null,
+    SnapshotHistoricalFacts? AlternativeHistoricalFacts = null, string? ScenarioId = null);
 
 public sealed record PayrollCalculationRunDto(PayrollCalculationRunId Id, CompanyId CompanyId,
     PayrollPeriodId PayrollPeriodId, PayrollCalculationSnapshotId SnapshotId, int SnapshotRevision,

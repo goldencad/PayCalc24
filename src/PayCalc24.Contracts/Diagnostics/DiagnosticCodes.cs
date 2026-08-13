@@ -2,6 +2,19 @@ namespace PayCalc24.Contracts.Diagnostics;
 
 public static class DiagnosticCodes
 {
+    public const string ScenarioNotFound = "SCENARIO.NOT_FOUND";
+    public const string ScenarioSnapshotNotFound = "SCENARIO.SNAPSHOT_NOT_FOUND";
+    public const string ScenarioBaselineNotFound = "SCENARIO.BASELINE_NOT_FOUND";
+    public const string ScenarioBaselineHashInvalid = "SCENARIO.BASELINE_HASH_INVALID";
+    public const string ScenarioInvalidPolicyOverride = "SCENARIO.INVALID_POLICY_OVERRIDE";
+    public const string ScenarioInvalidInputOverride = "SCENARIO.INVALID_INPUT_OVERRIDE";
+    public const string ScenarioCrossCompanyReference = "SCENARIO.CROSS_COMPANY_REFERENCE";
+    public const string ScenarioIdempotencyConflict = "SCENARIO.IDEMPOTENCY_CONFLICT";
+    public const string ScenarioConcurrentExecution = "SCENARIO.CONCURRENT_EXECUTION";
+    public const string ScenarioExecutionFailed = "SCENARIO.EXECUTION_FAILED";
+    public const string ScenarioResultNotFound = "SCENARIO.RESULT_NOT_FOUND";
+    public const string ScenarioEngineIncompatible = "SCENARIO.ENGINE_INCOMPATIBLE";
+    public const string ScenarioBlockingValidationFailed = "SCENARIO.BLOCKING_VALIDATION_FAILED";
     public const string PayrollReviewPeriodNotFound="PAYROLL_REVIEW.PERIOD_NOT_FOUND";
     public const string PayrollReviewSnapshotNotFound="PAYROLL_REVIEW.SNAPSHOT_NOT_FOUND";
     public const string PayrollReviewCalculationRunNotFound="PAYROLL_REVIEW.CALCULATION_RUN_NOT_FOUND";

@@ -21,7 +21,11 @@ public sealed class PayrollFundCalculationService(ICompanyContext companyContext
     public ValueTask<FundAllocationResultDto> CalculateAsync(CalculatePayrollFund c,CancellationToken token=default)
     {
         Scope(c.CompanyId);if(string.IsNullOrWhiteSpace(c.IdempotencyKey))throw new ArgumentException("Idempotency key is required.",nameof(c));
-        var snapshot=snapshots.GetSnapshotById(c.CompanyId,c.SnapshotId);var pinned=(snapshot.PolicyConfiguration.FundVersions??[]).SingleOrDefault(x=>x.FundVersionId==c.FundVersionId)??throw Error(DiagnosticCodes.PayrollFundVersionNotFound);
+        var snapshot=snapshots.GetSnapshotById(c.CompanyId,c.SnapshotId);
+        if(c.ExecutionMode==PayrollExecutionMode.Production&&(c.AlternativeFundVersion is not null||c.AlternativeHistoricalFacts is not null))Throw(DiagnosticCodes.PayrollFundCrossCompanyReference);
+        snapshot=snapshot with{HistoricalFacts=c.AlternativeHistoricalFacts??snapshot.HistoricalFacts};
+        var pinned=c.AlternativeFundVersion??(snapshot.PolicyConfiguration.FundVersions??[]).SingleOrDefault(x=>x.FundVersionId==c.FundVersionId)??throw Error(DiagnosticCodes.PayrollFundVersionNotFound);
+        if(pinned.FundVersionId!=c.FundVersionId)Throw(DiagnosticCodes.PayrollFundVersionNotFound);
         Validate(c,pinned,snapshot);
         var fingerprint=Fingerprint(c,snapshot.SnapshotHash);lock(gate)
         {

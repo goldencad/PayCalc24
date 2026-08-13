@@ -36,10 +36,11 @@ public sealed class PayrollCalculationService(ICompanyContext companyContext, IC
         if(snapshot.CompanyId!=command.CompanyId)Fail(DiagnosticCodes.PayrollCalculationCrossCompanyReference);
         var period=periodService.GetById(command.CompanyId,snapshot.PayrollPeriodId);
         if(command.ExecutionMode==PayrollExecutionMode.Production&&period.LifecycleStatus!=PayrollPeriodStatus.FROZEN)Fail(DiagnosticCodes.PayrollCalculationSnapshotNotFrozen);
-        if(command.ExecutionMode==PayrollExecutionMode.Production&&command.AlternativePolicy is not null)Fail(DiagnosticCodes.PayrollCalculationComponentInvalid);
+        if(command.ExecutionMode==PayrollExecutionMode.Production&&(command.AlternativePolicy is not null||command.AlternativeHistoricalFacts is not null))Fail(DiagnosticCodes.PayrollCalculationComponentInvalid);
         if(command.ExpectedSnapshotHash is not null&&!StringComparer.Ordinal.Equals(command.ExpectedSnapshotHash,snapshot.SnapshotHash))Fail(DiagnosticCodes.PayrollCalculationSnapshotHashInvalid);
         var policy=command.AlternativePolicy??snapshot.PolicyConfiguration;
-        var fingerprint=Hash($"{command.SnapshotId.Value:D}|{snapshot.SnapshotRevision}|{command.ExecutionMode}|{snapshot.SnapshotHash}|{PolicyFingerprint(policy)}");
+        var executionSnapshot=snapshot with{HistoricalFacts=command.AlternativeHistoricalFacts??snapshot.HistoricalFacts,PolicyConfiguration=policy};
+        var fingerprint=Hash($"{command.SnapshotId.Value:D}|{snapshot.SnapshotRevision}|{command.ExecutionMode}|{snapshot.SnapshotHash}|{PolicyFingerprint(policy)}|{FactsFingerprint(executionSnapshot.HistoricalFacts)}|{command.ScenarioId}");
         PayrollCalculationRunDto run;
         lock(gate)
         {
@@ -59,8 +60,8 @@ public sealed class PayrollCalculationService(ICompanyContext companyContext, IC
         try
         {
             var producedSubjects=new List<PayrollSubjectCalculationResultDto>();var producedComponents=new List<PayComponentCalculationResultDto>();
-            foreach(var subject in snapshot.HistoricalFacts.Subjects.OrderBy(x=>x.EmployeeCode,StringComparer.Ordinal).ThenBy(x=>x.PayrollSubjectId.Value))
-                CalculateSubject(run,snapshot,policy,subject,producedSubjects,producedComponents);
+            foreach(var subject in executionSnapshot.HistoricalFacts.Subjects.OrderBy(x=>x.EmployeeCode,StringComparer.Ordinal).ThenBy(x=>x.PayrollSubjectId.Value))
+                CalculateSubject(run,executionSnapshot,policy,subject,producedSubjects,producedComponents);
             var resultHash=Hash(string.Join("\n",producedSubjects.OrderBy(x=>x.PayrollSubjectId.Value).Select(x=>x.ResultHash)));
             if(command.ExecutionMode==PayrollExecutionMode.Production)
                 await periodService.MarkCalculatedAsync(command.CompanyId,period.Id,period.Revision,token);
@@ -78,6 +79,11 @@ public sealed class PayrollCalculationService(ICompanyContext companyContext, IC
             return run;
         }
     }
+
+    private static string FactsFingerprint(SnapshotHistoricalFacts facts)=>Hash(string.Join("\n",
+        facts.Subjects.OrderBy(x=>x.PayrollSubjectId.Value).Select(x=>$"S|{x.PayrollSubjectId.Value:D}|{x.PayrollAssignmentId.Value:D}")
+        .Concat(facts.Inputs.OrderBy(x=>x.PayrollSubjectId.Value).ThenBy(x=>x.Code,StringComparer.Ordinal)
+            .Select(x=>$"I|{x.PayrollSubjectId.Value:D}|{x.PayrollInputDefinitionId.Value:D}|{x.Code}|{x.DataType}|{x.Unit}|{x.ResolvedValue}"))));
 
     private void CalculateSubject(PayrollCalculationRunDto run,PayrollCalculationSnapshotDto snapshot,
         SnapshotPolicyConfiguration policy,SnapshotSubjectFact subject,List<PayrollSubjectCalculationResultDto> subjectResults,

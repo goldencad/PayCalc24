@@ -63,7 +63,8 @@ public sealed record FundRequirement(string RequirementReference,CompanyId Compa
 public sealed record CalculatePayrollFund(CompanyId CompanyId,PayrollCalculationSnapshotId SnapshotId,
     PayrollFundVersionId FundVersionId,PayrollExecutionMode ExecutionMode,string IdempotencyKey,
     IReadOnlyList<FundRequirement> Requirements,PayrollCalculationRunId? CalculationRunId=null,string? ScenarioId=null,
-    decimal? ExplicitAvailableFund=null);
+    decimal? ExplicitAvailableFund=null,SnapshotPayrollFundVersion? AlternativeFundVersion=null,
+    SnapshotHistoricalFacts? AlternativeHistoricalFacts=null);
 
 public sealed record FundMemberAllocationResultDto(FundMemberAllocationResultId Id,FundAllocationResultId FundAllocationResultId,
     string RequirementReference,PayrollSubjectId? PayrollSubjectId,Guid? PayComponentId,decimal RequestedAmount,
