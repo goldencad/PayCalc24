@@ -11,7 +11,7 @@
 08 CLOSED
 09 CLOSED
 10 CLOSED
-11 IN PROGRESS — Generic Payroll Funds / Allocation / Coverage
+11 CLOSED — Generic Payroll Funds / Allocation / Coverage
 12 NOT STARTED — Attendance
 13 NOT STARTED — KPI / Performance / Gate
 14 NOT STARTED — TS24 Reference Policy Pack / P3

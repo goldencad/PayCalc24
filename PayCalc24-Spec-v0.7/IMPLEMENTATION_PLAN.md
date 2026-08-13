@@ -13,7 +13,7 @@ This is the authoritative 20-task roadmap after the v0.7 architecture re-baselin
 ## Task 09 — Payroll Period State Machine & Immutable Snapshot Resolution — CLOSED
 ## Task 10 — Payroll Calculation Orchestration — CLOSED
 
-## Task 11 — Generic Payroll Funds / Allocation / Coverage Engine — IN PROGRESS
+## Task 11 — Generic Payroll Funds / Allocation / Coverage Engine — CLOSED
 **Depends on:** 05,06,08,09,10
 
 Implement generic company-scoped Payroll Fund catalog/versioning; FIXED/INPUT/FORMULA sources; generic Fund scope; requirement/demand; Coverage; PROPORTIONAL/PRIORITY/WEIGHTED allocation; deterministic rounding/remainder; reserve/deficit boundaries; immutable fund/member allocation results; result hash/trace/provenance; same engine for Production/Replay/Back-test/What-if; minimal Task 09 snapshot policy-pinning extension if required.

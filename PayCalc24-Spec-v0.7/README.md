@@ -2,7 +2,7 @@
 
 **Type:** Architecture / roadmap re-baseline  
 **Roadmap:** 20 product-level tasks  
-**Status when authored:** Tasks 01–10 closed; Task 11 in progress with locked Generic Payroll Funds scope.
+**Status when authored:** Tasks 01–11 closed; Task 12 not started.
 
 v0.7 supersedes v0.6 as the authoritative specification for remaining task numbering and architecture boundaries.
 
@@ -48,4 +48,4 @@ Immutable Payroll Input Ledger
 Reproducible Snapshot-based Calculation
 ```
 
-Task 11 was already in progress when v0.7 was authored. This pack documents that scope; it does not replace or broaden the active Task 11 prompt.
+Task 11 is closed. Task 12 is the next implementation task under the v0.7 roadmap.
