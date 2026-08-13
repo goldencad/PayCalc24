@@ -7,6 +7,8 @@ using PayCalc24.Contracts.Organization;
 using PayCalc24.Contracts.PayrollInput;
 using PayCalc24.Contracts.Temporal;
 
+#pragma warning disable CA1725
+
 namespace PayCalc24.ApplicationTests;
 
 public sealed class Task12AttendanceTests
