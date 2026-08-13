@@ -1,0 +1,44 @@
+using PayCalc24.Contracts.Diagnostics;
+using PayCalc24.Contracts.Identity;
+using PayCalc24.Contracts.Operations;
+using PayCalc24.Contracts.Organization;
+using PayCalc24.Contracts.PayrollCalculation;
+using PayCalc24.Contracts.PayrollInput;
+using PayCalc24.Contracts.Performance;
+using PayCalc24.Contracts.Temporal;
+using PayCalc24.Performance.Services;
+using Xunit;
+
+namespace PayCalc24.ApplicationTests;
+
+public sealed class Task13PerformanceTests
+{
+ [Theory]
+ [InlineData(1)][InlineData(3)][InlineData(7)]
+ public async Task SamePipelineSupportsArbitraryKpiCountReplayAndAttendanceInputGate(int count)
+ {
+  var f=new Fixture();var assignments=new List<KpiAssignmentId>();var results=new List<KpiResultId>();
+  for(var i=0;i<count;i++){var draft=await f.Service.CreateKpiDraftAsync(f.Company,$"METRIC_{i}",$"Metric {i}",KpiDataType.DECIMAL,"RATIO",KpiDirection.OTHER,f.Effective);var kpi=await f.Service.PublishKpiAsync(f.Company,draft.Id);assignments.Add((await f.Service.AssignAsync(f.Company,kpi.Id,f.Scope,1m/count,f.Effective)).Id);results.Add((await f.Service.SubmitResultAsync(f.Company,f.Scope,kpi.Id,f.Period,KpiMeasuredValue.Decimal(1.05m),KpiResultSourceType.API,null,$"row-{i}",$"result-{i}")).Id);}
+  var gate=new PerformanceGateDto(PerformanceGateId.From(Guid.NewGuid()),f.Company,"DISCIPLINE",10,null,null,PerformanceGateEffectType.CAP,.90m,null,false);var policyDraft=await f.Service.CreatePolicyDraftAsync(f.Company,"GENERIC",f.Effective,WeightNormalization.REQUIRE_SUM_ONE,[gate],[new("FINAL_ACHIEVEMENT",PayrollInputDataType.DECIMAL,PayrollInputUnitType.SCORE)]);var policy=await f.Service.PublishPolicyAsync(f.Company,policyDraft.Id);var input=new PerformanceInput("ATTENDANCE_GATE",PayrollInputValue.Decimal(1m),PayrollInputLedgerEntryId.From(Guid.NewGuid()));
+  var request=f.Request(policy.Id,assignments,results,[input],PerformanceExecutionMode.REPLAY);var first=await f.Service.EvaluateAsync(request);var replay=await f.Service.EvaluateAsync(request);Assert.Equal(1.05m,first.OverallAchievement);Assert.Equal(.90m,first.FinalAchievement);Assert.Equal(first.ResultHash,replay.ResultHash);Assert.Equal(count,first.KpiDetails.Count);Assert.Empty(f.Ledger.Submissions);
+ }
+
+ [Fact]
+ public async Task ResultIngestionIsIdempotentConflictsAndCorrectionsPreserveHistory()
+ {
+  var f=new Fixture();var d=await f.Service.CreateKpiDraftAsync(f.Company,"QUALITY","Quality",KpiDataType.DECIMAL,"RATIO",KpiDirection.OTHER,f.Effective,minValue:0,maxValue:2);var k=await f.Service.PublishKpiAsync(f.Company,d.Id);var original=await f.Service.SubmitResultAsync(f.Company,f.Scope,k.Id,f.Period,KpiMeasuredValue.Decimal(.85m),KpiResultSourceType.IMPORT,null,"row","key");var retry=await f.Service.SubmitResultAsync(f.Company,f.Scope,k.Id,f.Period,KpiMeasuredValue.Decimal(.85m),KpiResultSourceType.IMPORT,null,"row","key");Assert.Equal(original.Id,retry.Id);var conflict=await Assert.ThrowsAsync<PerformanceException>(async()=>await f.Service.SubmitResultAsync(f.Company,f.Scope,k.Id,f.Period,KpiMeasuredValue.Decimal(.95m),KpiResultSourceType.IMPORT,null,"row","key"));Assert.Equal(DiagnosticCodes.PerformanceResultIdempotencyConflict,conflict.Diagnostic.Code);var correction=await f.Service.SubmitResultAsync(f.Company,f.Scope,k.Id,f.Period,KpiMeasuredValue.Decimal(.95m),KpiResultSourceType.IMPORT,null,"row-corrected","key-2",original.Id);Assert.Equal(original.Id,correction.SupersedesResultId);Assert.NotEqual(original.Id,correction.Id);
+ }
+
+ private sealed class Fixture
+ {
+  public CompanyId Company{get;}=CompanyId.From(Guid.NewGuid());public PayrollSubjectId Subject{get;}=PayrollSubjectId.From(Guid.NewGuid());public KpiScope Scope=>new(KpiScopeType.INDIVIDUAL,Subject);public EffectivePeriod Effective=>new(new(2026,1,1),new(2027,1,1));public PerformancePeriod Period=>new("2026-Q3",new(2026,7,1),new(2026,9,30));public FakeLedger Ledger{get;}=new();public PerformanceService Service{get;}
+  public Fixture(){Service=new(new Context(Company),new User(),new Correlation(),new Audit(),TimeProvider.System,new Scopes(Company,Subject),new Expressions(),new Definitions(Company),Ledger);}
+  public PerformanceEvaluationRequest Request(PerformancePolicyVersionId p,IReadOnlyList<KpiAssignmentId>a,IReadOnlyList<KpiResultId>r,IReadOnlyList<PerformanceInput>i,PerformanceExecutionMode mode)=>new(Company,Scope,Period,new(2026,8,31),p,a,r,i,mode,"corr","1.0.0",mode==PerformanceExecutionMode.PRODUCTION?PayrollPeriodId.From(Guid.NewGuid()):null);
+ }
+ private sealed record Context(CompanyId CompanyId):ICompanyContext;private sealed class User:ICurrentUser{public UserId UserId{get;}=UserId.From(Guid.NewGuid());public bool HasPermission(string permissionCode)=>true;}private sealed class Correlation:ICorrelationContext{public string CorrelationId=>"corr";public string? IdempotencyKey=>null;}private sealed class Audit:IAuditWriter{public ValueTask WriteAsync(AuditEntry entry,CancellationToken cancellationToken=default)=>ValueTask.CompletedTask;}private sealed record Scopes(CompanyId Company,PayrollSubjectId Subject):IPerformanceScopeResolver{public CompanyId? FindCompany(KpiScope s)=>s.PayrollSubjectId==Subject?Company:null;}
+ private sealed class Expressions:IPerformanceExpressionEvaluator{public decimal Score(KpiDefinitionVersionDto d,KpiAssignmentDto a,KpiResultDto r,IReadOnlyDictionary<string,decimal> i)=>r.MeasuredValue.AsDecimal();public decimal Aggregate(PerformancePolicyVersionDto p,IReadOnlyList<PerformanceKpiDetail>d,IReadOnlyDictionary<string,decimal>i)=>d.Sum(x=>x.WeightedAchievement);public bool GateMatches(PerformanceGateDto g,IReadOnlyDictionary<string,decimal>i)=>i.TryGetValue("ATTENDANCE_GATE",out var v)&&v==1m;public decimal GateResult(PerformanceGateDto g,decimal c,IReadOnlyDictionary<string,decimal>i)=>c;}
+ private sealed record Definitions(CompanyId Company):IPayrollInputDefinitionService
+ {private PayrollInputDefinitionDto Dto=>new(PayrollInputDefinitionId.From(Guid.NewGuid()),Company,1,new(new(2026,1,1),null),PublicationState.PUBLISHED,new("FINAL_ACHIEVEMENT","Final",null,PayrollInputDataType.DECIMAL,PayrollInputUnitType.SCORE,PayrollInputSourceType.PERFORMANCE,PayrollInputAggregationType.LATEST,false,false,true,true,null,null,PayrollInputDefinitionStatus.ACTIVE));public PayrollInputDefinitionDto ResolveEffective(CompanyId c,string code,DateOnly d)=>Dto;public PayrollInputDefinitionDto ResolveEffective(CompanyId c,PayrollInputDefinitionId id,DateOnly d)=>Dto;public PayrollInputDefinitionDto GetByCode(CompanyId c,string code,int r)=>Dto;public ValueTask<PayrollInputDefinitionDto>CreateDraftAsync(CompanyId c,PayrollInputDefinitionId id,EffectivePeriod p,PayrollInputDefinitionContent x,CancellationToken t=default)=>throw new NotSupportedException();public ValueTask<PayrollInputDefinitionDto>UpdateDraftAsync(CompanyId c,PayrollInputDefinitionId id,int r,EffectivePeriod p,PayrollInputDefinitionContent x,CancellationToken t=default)=>throw new NotSupportedException();public ValueTask<PayrollInputDefinitionDto>PublishAsync(CompanyId c,PayrollInputDefinitionId id,int r,CancellationToken t=default)=>throw new NotSupportedException();public void Close(CompanyId c,PayrollInputDefinitionId id,int r,DateOnly d)=>throw new NotSupportedException();public IReadOnlyList<PayrollInputDefinitionDto>List(CompanyId c,PayrollInputDefinitionSearch s)=>[Dto];}
+ private sealed class FakeLedger:IPayrollInputLedgerService
+ {public List<SubmitPayrollInput>Submissions{get;}=[];public ValueTask<PayrollInputLedgerEntryDto>SubmitAsync(SubmitPayrollInput c,CancellationToken t=default){Submissions.Add(c);return ValueTask.FromResult(Make(c,null));}public ValueTask<PayrollInputLedgerEntryDto>CorrectAsync(SubmitPayrollInputCorrection c,CancellationToken t=default)=>throw new NotSupportedException();private static PayrollInputLedgerEntryDto Make(SubmitPayrollInput c,PayrollInputLedgerEntryId? s)=>new(PayrollInputLedgerEntryId.From(Guid.NewGuid()),c.CompanyId,c.PayrollSubjectId,c.PayrollPeriodId,c.BusinessDate,PayrollInputDefinitionId.From(Guid.NewGuid()),1,c.InputCode!,c.Value,c.Value.DataType,PayrollInputUnitType.SCORE,PayrollInputAggregationType.LATEST,c.SourceType,c.SourceSystem,c.SourceReference,null,c.EffectiveDate,DateTimeOffset.UtcNow,null,c.CorrelationId!,c.IdempotencyKey,s);public EffectivePayrollInputDto GetEffectiveInput(CompanyId c,PayrollSubjectId s,PayrollPeriodId p,PayrollInputDefinitionId d)=>throw new NotSupportedException();public IReadOnlyList<EffectivePayrollInputDto>GetEffectiveInputSet(CompanyId c,PayrollSubjectId s,PayrollPeriodId p)=>[];public IReadOnlyList<PayrollInputLedgerEntryDto>GetHistory(CompanyId c,PayrollSubjectId s,PayrollPeriodId p,PayrollInputDefinitionId? d=null)=>[];public PayrollInputSourceTrace GetSourceTrace(CompanyId c,PayrollInputLedgerEntryId e)=>throw new NotSupportedException();public PayrollInputLedgerEntryDto?ResolveByIdempotencyKey(CompanyId c,string k)=>null;}
+}

@@ -241,6 +241,19 @@ public sealed class ProjectDependencyTests
     }
 
     [Fact]
+    public void PerformanceIsGenericPinnedAndOnlyPublishesThroughPayrollInputContracts()
+    {
+        var project=LoadProject("src/Modules/PayCalc24.Performance/PayCalc24.Performance.csproj");
+        Assert.Equal(["PayCalc24.Contracts","PayCalc24.Domain"],ProjectReferences(project));
+        AssertSourceExcludes("src/Modules/PayCalc24.Performance","Microsoft.EntityFrameworkCore","PayCalc24.Attendance","PayCalc24.PayrollCalculation","PayCalc24.PayrollFunds","CalculateGross","CalculateNet","DateTime.Now","DateTime.Today","GetCurrent(","GetLatest(","Kpi1","Kpi2","Kpi3","P1","P2","P3","float ","double ");
+        var source=File.ReadAllText(Path.Combine(RepositoryRoot,"src","Modules","PayCalc24.Performance","Services","PerformanceService.cs"));
+        Assert.Contains("IPayrollInputLedgerService",source,StringComparison.Ordinal);Assert.Contains("ledger.SubmitAsync",source,StringComparison.Ordinal);Assert.Contains("ledger.CorrectAsync",source,StringComparison.Ordinal);
+        var migration=File.ReadAllText(Path.Combine(RepositoryRoot,"src","PayCalc24.Infrastructure.MariaDb","Migrations","20260813130000_Task13Performance.cs"));
+        foreach(var table in new[]{"KpiDefinitions","KpiDefinitionVersions","KpiAssignments","KpiResults","PerformancePolicyDefinitions","PerformancePolicyVersions","PerformanceGates","PerformanceEvaluationResults","PerformanceEvaluationKpiDetails","PerformanceDerivedInputProvenance"})Assert.Contains($"CREATE TABLE {table}",migration,StringComparison.Ordinal);
+        Assert.Contains("decimal(28,8)",migration,StringComparison.Ordinal);Assert.DoesNotContain(" float",migration,StringComparison.OrdinalIgnoreCase);Assert.DoesNotContain(" double",migration,StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void AvaloniaXamlDoesNotHardCodePresentationContentOrSvgPaths()
     {
         var clientDirectory = Path.Combine(RepositoryRoot, "src", "PayCalc24.Client.Avalonia");

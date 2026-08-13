@@ -17,6 +17,7 @@
     <ProjectReference Include="..\..\src\Modules\PayCalc24.PayrollCalculation\PayCalc24.PayrollCalculation.csproj" />
     <ProjectReference Include="..\..\src\Modules\PayCalc24.PayrollFunds\PayCalc24.PayrollFunds.csproj" />
     <ProjectReference Include="..\..\src\Modules\PayCalc24.Attendance\PayCalc24.Attendance.csproj" />
+    <ProjectReference Include="..\..\src\Modules\PayCalc24.Performance\PayCalc24.Performance.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />

@@ -2,6 +2,24 @@ namespace PayCalc24.Contracts.Diagnostics;
 
 public static class DiagnosticCodes
 {
+    public const string PerformanceKpiDefinitionNotFound="PERFORMANCE.KPI_DEFINITION_NOT_FOUND";
+    public const string PerformanceDuplicateKpiCode="PERFORMANCE.DUPLICATE_KPI_CODE";
+    public const string PerformanceKpiAssignmentNotFound="PERFORMANCE.KPI_ASSIGNMENT_NOT_FOUND";
+    public const string PerformanceKpiAssignmentAmbiguous="PERFORMANCE.KPI_ASSIGNMENT_AMBIGUOUS";
+    public const string PerformanceInvalidWeight="PERFORMANCE.INVALID_WEIGHT";
+    public const string PerformanceDuplicateResult="PERFORMANCE.DUPLICATE_RESULT";
+    public const string PerformanceResultIdempotencyConflict="PERFORMANCE.RESULT_IDEMPOTENCY_CONFLICT";
+    public const string PerformanceInvalidResultType="PERFORMANCE.INVALID_RESULT_TYPE";
+    public const string PerformanceInvalidResultRange="PERFORMANCE.INVALID_RESULT_RANGE";
+    public const string PerformancePolicyNotFound="PERFORMANCE.POLICY_NOT_FOUND";
+    public const string PerformancePolicyAmbiguous="PERFORMANCE.POLICY_AMBIGUOUS";
+    public const string PerformancePublishedPolicyImmutable="PERFORMANCE.PUBLISHED_POLICY_IMMUTABLE";
+    public const string PerformanceGateDuplicatePriority="PERFORMANCE.GATE_DUPLICATE_PRIORITY";
+    public const string PerformanceGateInvalidEffect="PERFORMANCE.GATE_INVALID_EFFECT";
+    public const string PerformanceGateEvaluationFailed="PERFORMANCE.GATE_EVALUATION_FAILED";
+    public const string PerformanceRequiredInputMissing="PERFORMANCE.REQUIRED_INPUT_MISSING";
+    public const string PerformanceCrossCompanyReference="PERFORMANCE.CROSS_COMPANY_REFERENCE";
+    public const string PerformanceBlockingValidationFailed="PERFORMANCE.BLOCKING_VALIDATION_FAILED";
     public const string AttendanceSourceNotFound="ATTENDANCE.SOURCE_NOT_FOUND";
     public const string AttendanceInvalidMapping="ATTENDANCE.INVALID_MAPPING";
     public const string AttendanceUnknownPayrollSubject="ATTENDANCE.UNKNOWN_PAYROLL_SUBJECT";
