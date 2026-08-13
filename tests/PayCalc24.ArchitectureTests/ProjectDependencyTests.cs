@@ -94,6 +94,26 @@ public sealed class ProjectDependencyTests
     }
 
     [Fact]
+    public void TemporalFrameworkDoesNotIntroducePersistenceOrCompanyUserMasters()
+    {
+        AssertSourceExcludes(
+            "src/PayCalc24.Application/Temporal",
+            "Microsoft.EntityFrameworkCore",
+            "Pomelo",
+            "MySqlConnector",
+            "DbContext");
+
+        var temporalSources = Directory.GetFiles(
+                Path.Combine(RepositoryRoot, "src", "PayCalc24.Contracts", "Temporal"),
+                "*.cs", SearchOption.AllDirectories)
+            .Select(File.ReadAllText);
+
+        Assert.DoesNotContain(temporalSources, source =>
+            source.Contains("class Company", StringComparison.Ordinal) ||
+            source.Contains("class User", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void AvaloniaXamlDoesNotHardCodePresentationContentOrSvgPaths()
     {
         var clientDirectory = Path.Combine(RepositoryRoot, "src", "PayCalc24.Client.Avalonia");
