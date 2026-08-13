@@ -6,6 +6,8 @@ using PayCalc24.Contracts.Temporal;
 using PayCalc24.Organization.Model;
 using PayCalc24.Organization.Services;
 
+#pragma warning disable CA1861
+
 namespace PayCalc24.ApplicationTests;
 
 public sealed class Task04OrganizationTests
