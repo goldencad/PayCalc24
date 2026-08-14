@@ -21,6 +21,7 @@ public sealed class ShellViewModel : ViewModelBase
             { AppRoute.Dashboard => IconKey.Dashboard, AppRoute.Payroll => IconKey.Payroll,
               AppRoute.Configuration => IconKey.Settings, AppRoute.Scenarios => IconKey.Scenario, _ => IconKey.Report })));
         NavigateCommand = new DelegateCommand(() => { });
+        ExitCommand = new DelegateCommand(() => ExitRequested?.Invoke(this, EventArgs.Empty));
         navigation.PropertyChanged += (_, _) => { Changed(nameof(CurrentTitle)); Changed(nameof(CurrentRoute)); };
         culture.CultureChanged += (_, _) => { Changed(nameof(AppTitle)); Changed(nameof(CurrentTitle)); Changed(nameof(StatusText)); Changed(nameof(LocalizedItems)); };
     }
@@ -32,6 +33,8 @@ public sealed class ShellViewModel : ViewModelBase
     public string CurrentTitle => localization.Resolve($"Nav.{CurrentRoute}", culture.Culture).Value;
     public string StatusText => localization.Resolve("Shell.StatusReady", culture.Culture).Value;
     public ICommand NavigateCommand { get; }
+    public ICommand ExitCommand { get; }
+    public event EventHandler? ExitRequested;
     public AppearanceState Appearance { get; }
     public OperationalWorkspaceViewModel Workspace { get; }
     public ICommand EnglishCommand => new DelegateCommand(() => culture.Select("en-US"));

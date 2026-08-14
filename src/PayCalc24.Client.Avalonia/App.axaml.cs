@@ -27,9 +27,19 @@ public sealed partial class App : Application
                     try
                     {
                         foreach (var check in window.RunSmokeChecks(root)) Console.WriteLine($"SMOKE PASS: {check}");
-                        // Give the official evaluation prompt time to open, then close it as part of the automated smoke exit.
+                        var screenshotPath = Environment.GetEnvironmentVariable("PAYCALC24_SMOKE_SCREENSHOT");
+                        if (!string.IsNullOrWhiteSpace(screenshotPath))
+                        {
+                            window.CaptureSmokeEvidence(screenshotPath);
+                            Console.WriteLine($"SMOKE PASS: screenshot captured at {screenshotPath}");
+                        }
+                        if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("PAYCALC24_ACTIPRO_LICENSE_KEY")))
+                        {
+                            Console.WriteLine("SMOKE INFO: Actipro evaluation runtime detected; close the trial prompt and main window manually.");
+                            return;
+                        }
+
                         await Task.Delay(1500).ConfigureAwait(true);
-                        foreach (var child in desktop.Windows.Where(candidate => candidate != window).ToArray()) child.Close();
                         Console.WriteLine("SMOKE PASS: main window rendered and application exits cleanly");
                         desktop.Shutdown(0);
                     }

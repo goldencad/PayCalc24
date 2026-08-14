@@ -58,12 +58,7 @@ public sealed class OperationalWorkspaceViewModel : ViewModelBase
         Areas = new(["DASHBOARD", "SUBJECTS", "INPUTS", "ATTENDANCE", "KPI", "PREPARE", "CALCULATE",
             "FUNDS", "VALIDATE", "EXPLAIN", "VARIANCE", "SCENARIO", "APPROVAL", "SETTLEMENT", "ACCOUNTING", "REPORTS"]);
         company.CompanyChanged += (_, _) => ResetForCompany();
-        culture.CultureChanged += (_, _) => { Changed(nameof(Header)); Changed(nameof(AreaTitle)); Changed(nameof(CompanyBackstage));
-            Changed(nameof(LanguageBackstage)); Changed(nameof(AppearanceBackstage)); Changed(nameof(SettingsBackstage));
-            Changed(nameof(AboutBackstage)); Changed(nameof(DemoNotice)); Changed(nameof(RevisionIdentity));
-            Changed(nameof(DemoLabel)); Changed(nameof(WorkflowLabel)); Changed(nameof(SubjectsLabel));
-            Changed(nameof(ComponentsLabel)); Changed(nameof(FundsLabel)); Changed(nameof(ValidationLabel));
-            Changed(nameof(StatutoryLabel)); Changed(nameof(MissingStatutoryNotice)); };
+        culture.CultureChanged += (_, _) => Changed(string.Empty);
         SelectAreaCommand = new DelegateCommand<string>(SelectArea);
         RunCommand = new AsyncDelegateCommand(async () => { Busy = true; await Task.Yield(); Busy = false; });
     }
@@ -93,6 +88,33 @@ public sealed class OperationalWorkspaceViewModel : ViewModelBase
     public string ValidationLabel => Local("Validation / review", "Kiểm tra / rà soát");
     public string StatutoryLabel => Local("Statutory / Net Pay / Employer Cost", "Nghĩa vụ / Thực lĩnh / Chi phí doanh nghiệp");
     public string MissingStatutoryNotice => Local("Missing statutory values remain UNAVAILABLE and are never rendered as zero.", "Dữ liệu nghĩa vụ còn thiếu hiển thị UNAVAILABLE và không bao giờ thành số không.");
+    public string RibbonHome => Local("HOME", "TRANG CHỦ");
+    public string RibbonInput => Local("INPUT", "ĐẦU VÀO");
+    public string RibbonPayroll => Local("PAYROLL", "TÍNH LƯƠNG");
+    public string RibbonReview => Local("REVIEW", "RÀ SOÁT");
+    public string RibbonApproval => Local("APPROVAL", "PHÊ DUYỆT");
+    public string RibbonFinance => Local("FINANCE", "TÀI CHÍNH");
+    public string RibbonReports => Local("REPORTS", "BÁO CÁO");
+    public string RibbonNavigate => Local("Navigate", "Điều hướng");
+    public string RibbonDashboard => Local("Dashboard", "Tổng quan");
+    public string RibbonSubjects => Local("Subjects", "Nhân sự");
+    public string RibbonInputs => Local("Payroll Inputs", "Dữ liệu lương");
+    public string RibbonAttendance => Local("Attendance", "Chấm công");
+    public string RibbonKpi => Local("KPI", "KPI");
+    public string RibbonPrepare => Local("Prepare", "Chuẩn bị");
+    public string RibbonCalculate => Local("Calculate", "Tính lương");
+    public string RibbonFunds => Local("Funds", "Nguồn quỹ");
+    public string RibbonValidate => Local("Validate", "Kiểm tra");
+    public string RibbonExplain => Local("Explain", "Giải trình");
+    public string RibbonVariance => Local("Variance", "Biến động");
+    public string RibbonScenario => Local("Scenario", "Kịch bản");
+    public string RibbonApprovalAction => Local("Approval", "Phê duyệt");
+    public string RibbonSettlement => Local("Settlement", "Quyết toán");
+    public string RibbonAccounting => Local("Accounting", "Hạch toán");
+    public string RibbonReportAction => Local("Reports", "Báo cáo");
+    public string BackstageSettings => Local("Settings", "Cài đặt");
+    public string BackstageAbout => Local("Application / About", "Ứng dụng / Giới thiệu");
+    public string BackstageExit => Local("Exit", "Thoát");
     public string SelectedArea { get => selectedArea; private set { selectedArea = value; Changed(); Changed(nameof(AreaTitle)); } }
     public string AreaTitle => culture.Culture == "vi-VN" ? Translate(SelectedArea) : SelectedArea.Replace('_', ' ');
     public bool Busy { get => busy; private set { busy = value; Changed(); Changed(nameof(ActivityText)); } }

@@ -5,33 +5,65 @@
         Width="1280" Height="820" MinWidth="980" MinHeight="680"
         Title="{Binding AppTitle}" Background="{DynamicResource BackgroundBrush}">
   <actipro:RibbonContainerPanel>
+    <ContentControl x:Name="RibbonHost">
     <actipro:Ribbon x:Name="MainRibbon">
       <actipro:Ribbon.ApplicationButtonContent>
         <actipro:RibbonApplicationButton Label="PayCalc24" KeyTipText="F" />
       </actipro:Ribbon.ApplicationButtonContent>
       <actipro:Ribbon.BackstageContent>
-        <actipro:RibbonBackstage x:Name="MainBackstage">
-          <actipro:RibbonBackstageTabItem Key="Company"><TextBlock Margin="32" Text="{Binding Workspace.CompanyBackstage}" FontSize="22" /></actipro:RibbonBackstageTabItem>
-          <actipro:RibbonBackstageTabItem Key="Language"><TextBlock Margin="32" Text="{Binding Workspace.LanguageBackstage}" FontSize="22" /></actipro:RibbonBackstageTabItem>
-          <actipro:RibbonBackstageTabItem Key="Appearance"><TextBlock Margin="32" Text="{Binding Workspace.AppearanceBackstage}" FontSize="22" /></actipro:RibbonBackstageTabItem>
-          <actipro:RibbonBackstageTabItem Key="Settings"><TextBlock Margin="32" Text="{Binding Workspace.SettingsBackstage}" FontSize="22" /></actipro:RibbonBackstageTabItem>
-          <actipro:RibbonBackstageTabItem Key="About"><TextBlock Margin="32" Text="{Binding Workspace.AboutBackstage}" FontSize="22" /></actipro:RibbonBackstageTabItem>
+        <actipro:RibbonBackstage x:Name="MainBackstage" HeaderBackground="{DynamicResource SurfaceBrush}">
+          <actipro:RibbonBackstageTabItem Key="Settings" Label="{Binding Workspace.BackstageSettings}">
+            <Border Padding="32" Background="{DynamicResource SurfaceBrush}"><StackPanel Spacing="16"><TextBlock Text="{Binding Workspace.SettingsBackstage}" FontSize="22" /><TextBlock Text="{Binding Workspace.LanguageBackstage}" /><TextBlock Text="{Binding Workspace.AppearanceBackstage}" /></StackPanel></Border>
+          </actipro:RibbonBackstageTabItem>
+          <actipro:RibbonBackstageTabItem Key="About" Label="{Binding Workspace.BackstageAbout}">
+            <Border Padding="32" Background="{DynamicResource SurfaceBrush}"><StackPanel Spacing="16"><TextBlock Text="{Binding Workspace.AboutBackstage}" FontSize="22" /><TextBlock Text="{Binding Workspace.CompanyBackstage}" /></StackPanel></Border>
+          </actipro:RibbonBackstageTabItem>
+          <actipro:RibbonBackstageHeaderSeparator HeaderAlignment="Bottom" />
+          <actipro:RibbonBackstageHeaderButton Key="Exit" Label="{Binding Workspace.BackstageExit}" HeaderAlignment="Bottom" Command="{Binding ExitCommand}" />
         </actipro:RibbonBackstage>
       </actipro:Ribbon.BackstageContent>
-      <actipro:RibbonTabItem Key="Home">
-        <actipro:RibbonGroup Key="Period"><actipro:BarButton Key="Refresh" Label="Refresh" Command="{Binding Workspace.RunCommand}" /></actipro:RibbonGroup>
-        <actipro:RibbonGroup Key="Language"><actipro:BarButton Key="English" Label="EN" Command="{Binding EnglishCommand}" /><actipro:BarButton Key="Vietnamese" Label="VI" Command="{Binding VietnameseCommand}" /></actipro:RibbonGroup>
-        <actipro:RibbonGroup Key="Appearance"><actipro:BarButton Key="System" Command="{Binding SystemCommand}" /><actipro:BarButton Key="Light" Command="{Binding LightCommand}" /><actipro:BarButton Key="Dark" Command="{Binding DarkCommand}" /></actipro:RibbonGroup>
+      <actipro:RibbonTabItem Key="Home" Label="{Binding Workspace.RibbonHome}">
+        <actipro:RibbonGroup Key="Navigate" Label="{Binding Workspace.RibbonNavigate}">
+          <actipro:BarButton Key="Dashboard" Label="{Binding Workspace.RibbonDashboard}" Command="{Binding Workspace.SelectAreaCommand}" CommandParameter="DASHBOARD" />
+          <actipro:BarButton Key="Subjects" Label="{Binding Workspace.RibbonSubjects}" Command="{Binding Workspace.SelectAreaCommand}" CommandParameter="SUBJECTS" />
+        </actipro:RibbonGroup>
       </actipro:RibbonTabItem>
-      <actipro:RibbonTabItem Key="Payroll">
-        <actipro:RibbonGroup Key="Preparation"><actipro:BarButton Key="Prepare" Command="{Binding Workspace.RunCommand}" /><actipro:BarButton Key="Freeze" Command="{Binding Workspace.RunCommand}" /></actipro:RibbonGroup>
-        <actipro:RibbonGroup Key="Run"><actipro:BarButton Key="Calculate" Command="{Binding Workspace.RunCommand}" /></actipro:RibbonGroup>
+      <actipro:RibbonTabItem Key="Input" Label="{Binding Workspace.RibbonInput}">
+        <actipro:RibbonGroup Key="Input" Label="{Binding Workspace.RibbonNavigate}">
+          <actipro:BarButton Key="Inputs" Label="{Binding Workspace.RibbonInputs}" Command="{Binding Workspace.SelectAreaCommand}" CommandParameter="INPUTS" />
+          <actipro:BarButton Key="Attendance" Label="{Binding Workspace.RibbonAttendance}" Command="{Binding Workspace.SelectAreaCommand}" CommandParameter="ATTENDANCE" />
+          <actipro:BarButton Key="KPI" Label="{Binding Workspace.RibbonKpi}" Command="{Binding Workspace.SelectAreaCommand}" CommandParameter="KPI" />
+        </actipro:RibbonGroup>
       </actipro:RibbonTabItem>
-      <actipro:RibbonTabItem Key="Data"><actipro:RibbonGroup Key="Sources"><actipro:BarButton Key="Inputs" Command="{Binding Workspace.RunCommand}" /><actipro:BarButton Key="Attendance" Command="{Binding Workspace.RunCommand}" /><actipro:BarButton Key="KPI" Command="{Binding Workspace.RunCommand}" /></actipro:RibbonGroup></actipro:RibbonTabItem>
-      <actipro:RibbonTabItem Key="Review"><actipro:RibbonGroup Key="Review"><actipro:BarButton Key="Validate" Command="{Binding Workspace.RunCommand}" /><actipro:BarButton Key="Explain" Command="{Binding Workspace.RunCommand}" /><actipro:BarButton Key="Submit" Command="{Binding Workspace.RunCommand}" /><actipro:BarButton Key="Approve" IsEnabled="False" /><actipro:BarButton Key="Lock" IsEnabled="False" /></actipro:RibbonGroup></actipro:RibbonTabItem>
-      <actipro:RibbonTabItem Key="Scenario"><actipro:RibbonGroup Key="Simulation"><actipro:BarButton Key="WhatIf" Label="What-if" Command="{Binding Workspace.RunCommand}" /><actipro:BarButton Key="Replay" Command="{Binding Workspace.RunCommand}" /></actipro:RibbonGroup></actipro:RibbonTabItem>
-      <actipro:RibbonTabItem Key="Reports"><actipro:RibbonGroup Key="Output"><actipro:BarButton Key="Render" Label="Render report" Command="{Binding Workspace.RunCommand}" /></actipro:RibbonGroup></actipro:RibbonTabItem>
+      <actipro:RibbonTabItem Key="Payroll" Label="{Binding Workspace.RibbonPayroll}">
+        <actipro:RibbonGroup Key="Payroll" Label="{Binding Workspace.RibbonNavigate}">
+          <actipro:BarButton Key="Prepare" Label="{Binding Workspace.RibbonPrepare}" Command="{Binding Workspace.SelectAreaCommand}" CommandParameter="PREPARE" />
+          <actipro:BarButton Key="Calculate" Label="{Binding Workspace.RibbonCalculate}" Command="{Binding Workspace.SelectAreaCommand}" CommandParameter="CALCULATE" />
+          <actipro:BarButton Key="Funds" Label="{Binding Workspace.RibbonFunds}" Command="{Binding Workspace.SelectAreaCommand}" CommandParameter="FUNDS" />
+        </actipro:RibbonGroup>
+      </actipro:RibbonTabItem>
+      <actipro:RibbonTabItem Key="Review" Label="{Binding Workspace.RibbonReview}">
+        <actipro:RibbonGroup Key="Review" Label="{Binding Workspace.RibbonNavigate}">
+          <actipro:BarButton Key="Validate" Label="{Binding Workspace.RibbonValidate}" Command="{Binding Workspace.SelectAreaCommand}" CommandParameter="VALIDATE" />
+          <actipro:BarButton Key="Explain" Label="{Binding Workspace.RibbonExplain}" Command="{Binding Workspace.SelectAreaCommand}" CommandParameter="EXPLAIN" />
+          <actipro:BarButton Key="Variance" Label="{Binding Workspace.RibbonVariance}" Command="{Binding Workspace.SelectAreaCommand}" CommandParameter="VARIANCE" />
+          <actipro:BarButton Key="Scenario" Label="{Binding Workspace.RibbonScenario}" Command="{Binding Workspace.SelectAreaCommand}" CommandParameter="SCENARIO" />
+        </actipro:RibbonGroup>
+      </actipro:RibbonTabItem>
+      <actipro:RibbonTabItem Key="Approval" Label="{Binding Workspace.RibbonApproval}">
+        <actipro:RibbonGroup Key="Approval" Label="{Binding Workspace.RibbonNavigate}">
+          <actipro:BarButton Key="Approval" Label="{Binding Workspace.RibbonApprovalAction}" Command="{Binding Workspace.SelectAreaCommand}" CommandParameter="APPROVAL" />
+          <actipro:BarButton Key="Settlement" Label="{Binding Workspace.RibbonSettlement}" Command="{Binding Workspace.SelectAreaCommand}" CommandParameter="SETTLEMENT" />
+        </actipro:RibbonGroup>
+      </actipro:RibbonTabItem>
+      <actipro:RibbonTabItem Key="Finance" Label="{Binding Workspace.RibbonFinance}">
+        <actipro:RibbonGroup Key="Finance" Label="{Binding Workspace.RibbonNavigate}"><actipro:BarButton Key="Accounting" Label="{Binding Workspace.RibbonAccounting}" Command="{Binding Workspace.SelectAreaCommand}" CommandParameter="ACCOUNTING" /></actipro:RibbonGroup>
+      </actipro:RibbonTabItem>
+      <actipro:RibbonTabItem Key="Reports" Label="{Binding Workspace.RibbonReports}">
+        <actipro:RibbonGroup Key="Reports" Label="{Binding Workspace.RibbonNavigate}"><actipro:BarButton Key="Reports" Label="{Binding Workspace.RibbonReportAction}" Command="{Binding Workspace.SelectAreaCommand}" CommandParameter="REPORTS" /></actipro:RibbonGroup>
+      </actipro:RibbonTabItem>
     </actipro:Ribbon>
+    </ContentControl>
     <Grid RowDefinitions="Auto,*,Auto">
     <Border Padding="18,10" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
       <Grid ColumnDefinitions="Auto,*,Auto">
@@ -45,13 +77,8 @@
         <TextBlock Grid.Column="2" Text="{Binding Workspace.DemoNotice}" VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}" />
       </Grid>
     </Border>
-    <Grid Grid.Row="1" ColumnDefinitions="210,*">
-      <Border Padding="10" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,1,0">
-        <ListBox ItemsSource="{Binding Workspace.Areas}" SelectedIndex="0" SelectionChanged="OnWorkspaceAreaChanged">
-          <ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding}" Margin="10,7" FontSize="13" /></DataTemplate></ListBox.ItemTemplate>
-        </ListBox>
-      </Border>
-      <ScrollViewer Grid.Column="1">
+    <Grid Grid.Row="1">
+      <ScrollViewer>
         <StackPanel Margin="24" Spacing="18">
           <Grid ColumnDefinitions="*,Auto">
             <StackPanel><TextBlock Text="{Binding Workspace.AreaTitle}" FontSize="28" FontWeight="SemiBold" />

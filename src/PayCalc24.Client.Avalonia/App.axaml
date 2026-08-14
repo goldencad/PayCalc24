@@ -3,7 +3,9 @@
              xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
              x:Class="PayCalc24.Client.Avalonia.App">
   <Application.Styles>
-    <actipro:ModernTheme />
+    <actipro:ModernTheme>
+      <StyleInclude Source="avares://ActiproSoftware.Avalonia.Bars/Themes/Common.axaml" />
+    </actipro:ModernTheme>
   </Application.Styles>
   <Application.Resources>
     <ResourceDictionary>

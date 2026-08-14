@@ -80,6 +80,22 @@ public sealed class Task19PresentationReportingTests
         Assert.Equal("DASHBOARD", root.Workspace.SelectedArea);
     }
 
+    [Theory]
+    [InlineData("DASHBOARD")]
+    [InlineData("INPUTS")]
+    [InlineData("KPI")]
+    [InlineData("CALCULATE")]
+    [InlineData("EXPLAIN")]
+    [InlineData("APPROVAL")]
+    [InlineData("ACCOUNTING")]
+    [InlineData("REPORTS")]
+    public void RibbonNavigationCommandSelectsOperationalWorkspace(string area)
+    {
+        var root = new DesktopCompositionRoot();
+        root.Workspace.SelectAreaCommand.Execute(area);
+        Assert.Equal(area, root.Workspace.SelectedArea);
+    }
+
     [Fact]
     public void ReportsPinIdentityAndFormatCultureWithoutChangingCanonicalSource()
     {

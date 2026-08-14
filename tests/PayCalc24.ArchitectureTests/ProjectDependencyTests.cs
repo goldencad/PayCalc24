@@ -91,6 +91,34 @@ public sealed class ProjectDependencyTests
     }
 
     [Fact]
+    public void DefaultMainWindowUsesActiproRibbonBackstageAndRibbonNavigation()
+    {
+        var path = Path.Combine(RepositoryRoot, "src", "PayCalc24.Client.Avalonia", "MainWindow.axaml");
+        var document = XDocument.Load(path);
+        Assert.Equal("RibbonWindow", document.Root!.Name.LocalName);
+        var ribbon = Assert.Single(document.Descendants(), x => x.Name.LocalName == "Ribbon");
+        Assert.Equal("RibbonHost", ribbon.Parent!.Attributes().Single(x => x.Name.LocalName == "Name").Value);
+        Assert.Single(document.Descendants(), x => x.Name.LocalName == "RibbonBackstage");
+        var expectedAreas = new[] { "DASHBOARD", "INPUTS", "KPI", "CALCULATE", "EXPLAIN", "APPROVAL", "ACCOUNTING", "REPORTS" };
+        var parameters = document.Descendants().Where(x => x.Name.LocalName == "BarButton")
+            .SelectMany(x => x.Attributes().Where(a => a.Name.LocalName == "CommandParameter"))
+            .Select(x => x.Value).ToHashSet(StringComparer.Ordinal);
+        Assert.All(expectedAreas, area => Assert.Contains(area, parameters));
+        Assert.DoesNotContain(document.Descendants().Where(x => x.Name.LocalName == "ListBox")
+            .SelectMany(x => x.Attributes()), x => x.Name.LocalName == "ItemsSource" && x.Value.Contains("Workspace.Areas", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void DesktopLoadsActiproBarsControlThemes()
+    {
+        var path = Path.Combine(RepositoryRoot, "src", "PayCalc24.Client.Avalonia", "App.axaml");
+        var document = XDocument.Load(path);
+        var modernTheme = Assert.Single(document.Descendants(), x => x.Name.LocalName == "ModernTheme");
+        var barsTheme = Assert.Single(modernTheme.Elements(), x => x.Name.LocalName == "StyleInclude");
+        Assert.Equal("avares://ActiproSoftware.Avalonia.Bars/Themes/Common.axaml", barsTheme.Attribute("Source")?.Value);
+    }
+
+    [Fact]
     public void FeatureModulesDoNotReferenceOtherFeatureModules()
     {
         var moduleProjects = Directory.GetFiles(
