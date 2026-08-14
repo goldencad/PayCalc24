@@ -22,7 +22,7 @@ public sealed class ShellViewModel : ViewModelBase
               AppRoute.Configuration => IconKey.Settings, AppRoute.Scenarios => IconKey.Scenario, _ => IconKey.Report })));
         NavigateCommand = new DelegateCommand(() => { });
         navigation.PropertyChanged += (_, _) => { Changed(nameof(CurrentTitle)); Changed(nameof(CurrentRoute)); };
-        culture.CultureChanged += (_, _) => { Changed(nameof(AppTitle)); Changed(nameof(CurrentTitle)); Changed(nameof(StatusText)); Changed(nameof(LocalizedItems)); };
+        culture.CultureChanged += (_, _) => { Changed(nameof(AppTitle)); Changed(nameof(CurrentTitle)); Changed(nameof(StatusText)); Changed(nameof(LocalizedItems)); Changed(string.Empty); };
     }
     public ObservableCollection<NavigationItem> Items { get; }
     public IEnumerable<LocalizedNavigationItem> LocalizedItems => Items.Select(x =>
@@ -39,6 +39,47 @@ public sealed class ShellViewModel : ViewModelBase
     public ICommand LightCommand => new DelegateCommand(() => Appearance.Select(PayCalc24.Contracts.Presentation.ThemeMode.LIGHT));
     public ICommand DarkCommand => new DelegateCommand(() => Appearance.Select(PayCalc24.Contracts.Presentation.ThemeMode.DARK));
     public ICommand SystemCommand => new DelegateCommand(() => Appearance.Select(PayCalc24.Contracts.Presentation.ThemeMode.SYSTEM));
+    public ICommand NavigateAreaCommand => Workspace.SelectAreaCommand;
+    public string TabHome => Local("Home", "Trang chủ");
+    public string TabInput => Local("Input", "Đầu vào");
+    public string TabPayroll => Local("Payroll", "Tính lương");
+    public string TabReview => Local("Review", "Rà soát");
+    public string TabApproval => Local("Approval", "Phê duyệt");
+    public string TabFinance => Local("Finance", "Tài chính");
+    public string TabReports => Local("Reports", "Báo cáo");
+    public string DashboardLabel => Local("Dashboard", "Tổng quan");
+    public string SubjectsLabel => Local("Subjects", "Nhân sự");
+    public string InputsLabel => Local("Payroll Inputs", "Dữ liệu lương");
+    public string AttendanceLabel => Local("Attendance", "Chấm công");
+    public string PrepareLabel => Local("Prepare", "Chuẩn bị");
+    public string CalculateLabel => Local("Calculate", "Tính lương");
+    public string FundsLabel => Local("Funds", "Nguồn quỹ");
+    public string ValidateLabel => Local("Validate", "Kiểm tra");
+    public string ExplainLabel => Local("Explain", "Giải trình");
+    public string VarianceLabel => Local("Variance", "Biến động");
+    public string ScenarioLabel => Local("Scenario", "Kịch bản");
+    public string SettlementLabel => Local("Settlement", "Quyết toán");
+    public string AccountingLabel => Local("Accounting", "Hạch toán");
+    public string FileKeyTip => Local("F", "F");
+    public string BackstageApplication => Local("Application", "Ứng dụng");
+    public string BackstageSettings => Local("Settings", "Cài đặt");
+    public string BackstageAbout => Local("About", "Giới thiệu");
+    public string BackstageExit => Local("Exit", "Thoát");
+    public string LanguageHeading => Local("Language", "Ngôn ngữ");
+    public string EnglishLabel => Local("English (United States)", "English (United States)");
+    public string VietnameseLabel => Local("Tiếng Việt", "Tiếng Việt");
+    public string ThemeHeading => Local("Theme", "Giao diện");
+    public string SystemThemeLabel => Local("System", "Hệ thống");
+    public string LightThemeLabel => Local("Light", "Sáng");
+    public string DarkThemeLabel => Local("Dark", "Tối");
+    public string AboutTitle => Local("About PayCalc24", "Giới thiệu PayCalc24");
+    public string AboutDescription => Local("Desktop operational MVP · Presentation-only demo adapter", "MVP desktop vận hành · Bộ chuyển đổi demo chỉ dành cho trình bày");
+    public string ExitLabel => Local("Exit PayCalc24", "Thoát PayCalc24");
+    public string RunActionLabel => Local("Run action", "Thực hiện");
+    public string InputSectionLabel => Local("Payroll inputs · Attendance · KPI", "Dữ liệu lương · Chấm công · KPI");
+    public string ReviewSectionLabel => Local("Variance · Approval · Accounting · Reports", "Biến động · Phê duyệt · Hạch toán · Báo cáo");
+    public string ViewLabel => Local("View", "Xem");
+    private string Local(string english, string vietnamese) => culture.Culture == "vi-VN" ? vietnamese : english;
     public void Navigate(AppRoute route) => navigation.Navigate(route);
 }
 public sealed record LocalizedNavigationItem(AppRoute Route, string Label);

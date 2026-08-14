@@ -24,6 +24,7 @@ public sealed partial class MainWindow : ActiproSoftware.UI.Avalonia.Controls.Ba
         if (DataContext is ShellViewModel shell && sender is ListBox { SelectedItem: string area })
             shell.Workspace.SelectArea(area);
     }
+    private void OnExitClick(object? sender, RoutedEventArgs e) => Close();
 
     internal IReadOnlyList<string> RunSmokeChecks(DesktopCompositionRoot root)
     {

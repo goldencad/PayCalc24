@@ -1,86 +1,358 @@
-<actipro:RibbonWindow xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
-        x:Class="PayCalc24.Client.Avalonia.MainWindow"
-        Width="1280" Height="820" MinWidth="980" MinHeight="680"
-        Title="{Binding AppTitle}" Background="{DynamicResource BackgroundBrush}">
+<?xml version="1.0"?>
+<actipro:RibbonWindow xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui" x:Class="PayCalc24.Client.Avalonia.MainWindow" Width="1280" Height="820" MinWidth="980" MinHeight="680" Title="{Binding AppTitle}" Background="{DynamicResource BackgroundBrush}">
   <actipro:RibbonContainerPanel>
     <actipro:Ribbon x:Name="MainRibbon">
       <actipro:Ribbon.ApplicationButtonContent>
-        <actipro:RibbonApplicationButton Label="PayCalc24" KeyTipText="F" />
+        <actipro:RibbonApplicationButton Label="File" KeyTipText="{Binding FileKeyTip}"/>
       </actipro:Ribbon.ApplicationButtonContent>
       <actipro:Ribbon.BackstageContent>
         <actipro:RibbonBackstage x:Name="MainBackstage">
-          <actipro:RibbonBackstageTabItem Key="Company"><TextBlock Margin="32" Text="{Binding Workspace.CompanyBackstage}" FontSize="22" /></actipro:RibbonBackstageTabItem>
-          <actipro:RibbonBackstageTabItem Key="Language"><TextBlock Margin="32" Text="{Binding Workspace.LanguageBackstage}" FontSize="22" /></actipro:RibbonBackstageTabItem>
-          <actipro:RibbonBackstageTabItem Key="Appearance"><TextBlock Margin="32" Text="{Binding Workspace.AppearanceBackstage}" FontSize="22" /></actipro:RibbonBackstageTabItem>
-          <actipro:RibbonBackstageTabItem Key="Settings"><TextBlock Margin="32" Text="{Binding Workspace.SettingsBackstage}" FontSize="22" /></actipro:RibbonBackstageTabItem>
-          <actipro:RibbonBackstageTabItem Key="About"><TextBlock Margin="32" Text="{Binding Workspace.AboutBackstage}" FontSize="22" /></actipro:RibbonBackstageTabItem>
+          <actipro:RibbonBackstageTabItem Key="Application" Header="{Binding BackstageApplication}">
+            <StackPanel Margin="32" Spacing="12">
+              <TextBlock Text="{Binding AppTitle}" FontSize="28" FontWeight="Bold"/>
+              <TextBlock Text="{Binding Workspace.DemoNotice}"/>
+              <TextBlock Text="{Binding Workspace.RevisionIdentity}"/>
+            </StackPanel>
+          </actipro:RibbonBackstageTabItem>
+          <actipro:RibbonBackstageTabItem Key="Settings" Header="{Binding BackstageSettings}">
+            <StackPanel Margin="32" Spacing="14" Width="420" HorizontalAlignment="Left">
+              <TextBlock Text="{Binding LanguageHeading}" FontSize="22" FontWeight="SemiBold"/>
+              <RadioButton x:Name="EnglishOption" Content="{Binding EnglishLabel}" GroupName="Language" Command="{Binding EnglishCommand}"/>
+              <RadioButton x:Name="VietnameseOption" Content="{Binding VietnameseLabel}" GroupName="Language" Command="{Binding VietnameseCommand}"/>
+              <Separator Margin="0,8"/>
+              <TextBlock Text="{Binding ThemeHeading}" FontSize="22" FontWeight="SemiBold"/>
+              <RadioButton x:Name="SystemThemeOption" Content="{Binding SystemThemeLabel}" GroupName="Theme" Command="{Binding SystemCommand}"/>
+              <RadioButton x:Name="LightThemeOption" Content="{Binding LightThemeLabel}" GroupName="Theme" Command="{Binding LightCommand}"/>
+              <RadioButton x:Name="DarkThemeOption" Content="{Binding DarkThemeLabel}" GroupName="Theme" Command="{Binding DarkCommand}"/>
+            </StackPanel>
+          </actipro:RibbonBackstageTabItem>
+          <actipro:RibbonBackstageTabItem Key="About" Header="{Binding BackstageAbout}">
+            <StackPanel Margin="32" Spacing="8">
+              <TextBlock Text="{Binding AboutTitle}" FontSize="26"/>
+              <TextBlock Text="{Binding Workspace.AboutBackstage}"/>
+              <TextBlock Text="{Binding AboutDescription}"/>
+            </StackPanel>
+          </actipro:RibbonBackstageTabItem>
+          <actipro:RibbonBackstageTabItem Key="Exit" Header="{Binding BackstageExit}">
+            <Button Margin="32" Padding="22,12" HorizontalAlignment="Left" Content="{Binding ExitLabel}" Click="OnExitClick"/>
+          </actipro:RibbonBackstageTabItem>
         </actipro:RibbonBackstage>
       </actipro:Ribbon.BackstageContent>
-      <actipro:RibbonTabItem Key="Home">
-        <actipro:RibbonGroup Key="Period"><actipro:BarButton Key="Refresh" Label="Refresh" Command="{Binding Workspace.RunCommand}" /></actipro:RibbonGroup>
-        <actipro:RibbonGroup Key="Language"><actipro:BarButton Key="English" Label="EN" Command="{Binding EnglishCommand}" /><actipro:BarButton Key="Vietnamese" Label="VI" Command="{Binding VietnameseCommand}" /></actipro:RibbonGroup>
-        <actipro:RibbonGroup Key="Appearance"><actipro:BarButton Key="System" Command="{Binding SystemCommand}" /><actipro:BarButton Key="Light" Command="{Binding LightCommand}" /><actipro:BarButton Key="Dark" Command="{Binding DarkCommand}" /></actipro:RibbonGroup>
+      <actipro:RibbonTabItem Key="Home" Label="{Binding TabHome}">
+        <actipro:RibbonGroup Key="Explore" Label="Explore">
+          <actipro:BarButton Key="Dashboard" Label="{Binding DashboardLabel}" Command="{Binding NavigateAreaCommand}" CommandParameter="DASHBOARD"/>
+          <actipro:BarButton Key="Subjects" Label="{Binding SubjectsLabel}" Command="{Binding NavigateAreaCommand}" CommandParameter="SUBJECTS"/>
+        </actipro:RibbonGroup>
       </actipro:RibbonTabItem>
-      <actipro:RibbonTabItem Key="Payroll">
-        <actipro:RibbonGroup Key="Preparation"><actipro:BarButton Key="Prepare" Command="{Binding Workspace.RunCommand}" /><actipro:BarButton Key="Freeze" Command="{Binding Workspace.RunCommand}" /></actipro:RibbonGroup>
-        <actipro:RibbonGroup Key="Run"><actipro:BarButton Key="Calculate" Command="{Binding Workspace.RunCommand}" /></actipro:RibbonGroup>
+      <actipro:RibbonTabItem Key="Input" Label="{Binding TabInput}">
+        <actipro:RibbonGroup Key="Sources" Label="Sources">
+          <actipro:BarButton Key="Inputs" Label="{Binding InputsLabel}" Command="{Binding NavigateAreaCommand}" CommandParameter="INPUTS"/>
+          <actipro:BarButton Key="Attendance" Label="{Binding AttendanceLabel}" Command="{Binding NavigateAreaCommand}" CommandParameter="ATTENDANCE"/>
+          <actipro:BarButton Key="KPI" Label="KPI" Command="{Binding NavigateAreaCommand}" CommandParameter="KPI"/>
+        </actipro:RibbonGroup>
       </actipro:RibbonTabItem>
-      <actipro:RibbonTabItem Key="Data"><actipro:RibbonGroup Key="Sources"><actipro:BarButton Key="Inputs" Command="{Binding Workspace.RunCommand}" /><actipro:BarButton Key="Attendance" Command="{Binding Workspace.RunCommand}" /><actipro:BarButton Key="KPI" Command="{Binding Workspace.RunCommand}" /></actipro:RibbonGroup></actipro:RibbonTabItem>
-      <actipro:RibbonTabItem Key="Review"><actipro:RibbonGroup Key="Review"><actipro:BarButton Key="Validate" Command="{Binding Workspace.RunCommand}" /><actipro:BarButton Key="Explain" Command="{Binding Workspace.RunCommand}" /><actipro:BarButton Key="Submit" Command="{Binding Workspace.RunCommand}" /><actipro:BarButton Key="Approve" IsEnabled="False" /><actipro:BarButton Key="Lock" IsEnabled="False" /></actipro:RibbonGroup></actipro:RibbonTabItem>
-      <actipro:RibbonTabItem Key="Scenario"><actipro:RibbonGroup Key="Simulation"><actipro:BarButton Key="WhatIf" Label="What-if" Command="{Binding Workspace.RunCommand}" /><actipro:BarButton Key="Replay" Command="{Binding Workspace.RunCommand}" /></actipro:RibbonGroup></actipro:RibbonTabItem>
-      <actipro:RibbonTabItem Key="Reports"><actipro:RibbonGroup Key="Output"><actipro:BarButton Key="Render" Label="Render report" Command="{Binding Workspace.RunCommand}" /></actipro:RibbonGroup></actipro:RibbonTabItem>
+      <actipro:RibbonTabItem Key="Payroll" Label="{Binding TabPayroll}">
+        <actipro:RibbonGroup Key="Process" Label="Process">
+          <actipro:BarButton Key="Prepare" Label="{Binding PrepareLabel}" Command="{Binding NavigateAreaCommand}" CommandParameter="PREPARE"/>
+          <actipro:BarButton Key="Calculate" Label="{Binding CalculateLabel}" Command="{Binding NavigateAreaCommand}" CommandParameter="CALCULATE"/>
+          <actipro:BarButton Key="Funds" Label="{Binding FundsLabel}" Command="{Binding NavigateAreaCommand}" CommandParameter="FUNDS"/>
+        </actipro:RibbonGroup>
+      </actipro:RibbonTabItem>
+      <actipro:RibbonTabItem Key="Review" Label="{Binding TabReview}">
+        <actipro:RibbonGroup Key="ReviewTools" Label="Review">
+          <actipro:BarButton Key="Validate" Label="{Binding ValidateLabel}" Command="{Binding NavigateAreaCommand}" CommandParameter="VALIDATE"/>
+          <actipro:BarButton Key="Explain" Label="{Binding ExplainLabel}" Command="{Binding NavigateAreaCommand}" CommandParameter="EXPLAIN"/>
+          <actipro:BarButton Key="Variance" Label="{Binding VarianceLabel}" Command="{Binding NavigateAreaCommand}" CommandParameter="VARIANCE"/>
+          <actipro:BarButton Key="Scenario" Label="{Binding ScenarioLabel}" Command="{Binding NavigateAreaCommand}" CommandParameter="SCENARIO"/>
+        </actipro:RibbonGroup>
+      </actipro:RibbonTabItem>
+      <actipro:RibbonTabItem Key="Approval" Label="{Binding TabApproval}">
+        <actipro:RibbonGroup Key="ApprovalFlow" Label="Approval">
+          <actipro:BarButton Key="ApprovalCase" Label="{Binding TabApproval}" Command="{Binding NavigateAreaCommand}" CommandParameter="APPROVAL"/>
+          <actipro:BarButton Key="Settlement" Label="{Binding SettlementLabel}" Command="{Binding NavigateAreaCommand}" CommandParameter="SETTLEMENT"/>
+          <actipro:BarButton Key="Approve" Label="Approve" IsEnabled="False"/>
+          <actipro:BarButton Key="Lock" Label="Lock" IsEnabled="False"/>
+        </actipro:RibbonGroup>
+      </actipro:RibbonTabItem>
+      <actipro:RibbonTabItem Key="Finance" Label="{Binding TabFinance}">
+        <actipro:RibbonGroup Key="FinanceTools" Label="Finance">
+          <actipro:BarButton Key="Accounting" Label="{Binding AccountingLabel}" Command="{Binding NavigateAreaCommand}" CommandParameter="ACCOUNTING"/>
+        </actipro:RibbonGroup>
+      </actipro:RibbonTabItem>
+      <actipro:RibbonTabItem Key="Reports" Label="{Binding TabReports}">
+        <actipro:RibbonGroup Key="Output" Label="Output">
+          <actipro:BarButton Key="ReportsView" Label="{Binding TabReports}" Command="{Binding NavigateAreaCommand}" CommandParameter="REPORTS"/>
+        </actipro:RibbonGroup>
+      </actipro:RibbonTabItem>
     </actipro:Ribbon>
     <Grid RowDefinitions="Auto,*,Auto">
-    <Border Padding="18,10" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
-      <Grid ColumnDefinitions="Auto,*,Auto">
-        <StackPanel Orientation="Horizontal" Spacing="18">
-          <TextBlock Text="{Binding AppTitle}" FontSize="21" FontWeight="Bold" VerticalAlignment="Center" />
-          <StackPanel>
-            <TextBlock Text="{Binding Workspace.Header}" FontWeight="SemiBold" />
-            <TextBlock Text="{Binding Workspace.CompanyLabel, StringFormat='Company {0}'}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" />
+      <Border Padding="18,10" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
+        <Grid ColumnDefinitions="Auto,*,Auto">
+          <StackPanel Orientation="Horizontal" Spacing="18">
+            <TextBlock Text="{Binding AppTitle}" FontSize="21" FontWeight="Bold"/>
+            <StackPanel>
+              <TextBlock Text="{Binding Workspace.Header}" FontWeight="SemiBold"/>
+              <TextBlock Text="{Binding Workspace.CompanyLabel, StringFormat='Company {0}'}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+            </StackPanel>
           </StackPanel>
-        </StackPanel>
-        <TextBlock Grid.Column="2" Text="{Binding Workspace.DemoNotice}" VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}" />
-      </Grid>
-    </Border>
-    <Grid Grid.Row="1" ColumnDefinitions="210,*">
-      <Border Padding="10" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,1,0">
-        <ListBox ItemsSource="{Binding Workspace.Areas}" SelectedIndex="0" SelectionChanged="OnWorkspaceAreaChanged">
-          <ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding}" Margin="10,7" FontSize="13" /></DataTemplate></ListBox.ItemTemplate>
-        </ListBox>
+          <Border Grid.Column="2" Padding="10,5" CornerRadius="12" Background="{DynamicResource WarningBrush}">
+            <TextBlock Text="{Binding Workspace.DemoNotice}" Foreground="White" FontWeight="Bold"/>
+          </Border>
+        </Grid>
       </Border>
-      <ScrollViewer Grid.Column="1">
+      <ScrollViewer Grid.Row="1">
         <StackPanel Margin="24" Spacing="18">
           <Grid ColumnDefinitions="*,Auto">
-            <StackPanel><TextBlock Text="{Binding Workspace.AreaTitle}" FontSize="28" FontWeight="SemiBold" />
-              <TextBlock Text="{Binding Workspace.RevisionIdentity}" Foreground="{DynamicResource TextSecondaryBrush}" /></StackPanel>
-            <Border Grid.Column="1" Padding="12,6" CornerRadius="12" Background="{DynamicResource AccentBrush}"><TextBlock Text="{Binding Workspace.DemoLabel}" Foreground="White" FontWeight="Bold" /></Border>
+            <StackPanel>
+              <TextBlock Text="{Binding Workspace.AreaTitle}" FontSize="28" FontWeight="SemiBold"/>
+              <TextBlock Text="{Binding Workspace.RevisionIdentity}" Foreground="{DynamicResource TextSecondaryBrush}"/>
+            </StackPanel>
+          <Button Grid.Column="1" Content="{Binding RunActionLabel}" Command="{Binding Workspace.RunCommand}" Padding="18,8"/>
           </Grid>
           <ItemsControl ItemsSource="{Binding Workspace.Cards}">
-            <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel Orientation="Horizontal" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate><DataTemplate><Border Width="165" Margin="0,0,10,10" Padding="14" CornerRadius="8" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"><StackPanel><TextBlock Text="{Binding Label}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/><TextBlock Text="{Binding Value}" FontSize="18" FontWeight="SemiBold" Margin="0,5,0,0"/></StackPanel></Border></DataTemplate></ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <WrapPanel/>
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Width="175" Margin="0,0,10,10" Padding="14" CornerRadius="8" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                  <StackPanel>
+                    <TextBlock Text="{Binding Label}" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding Value}" FontSize="18" FontWeight="SemiBold"/>
+                  </StackPanel>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
           </ItemsControl>
-          <TextBlock Text="{Binding Workspace.WorkflowLabel}" FontSize="18" FontWeight="SemiBold" />
-          <ItemsControl ItemsSource="{Binding Workspace.Steps}"><ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate><Border Padding="12,8" Margin="0,0,8,8" CornerRadius="6" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"><StackPanel><TextBlock Text="{Binding Label}" FontWeight="SemiBold"/><TextBlock Text="{Binding Status}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/></StackPanel></Border></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
-          <TextBlock Text="{Binding Workspace.SubjectsLabel}" FontSize="18" FontWeight="SemiBold" />
-          <ListBox ItemsSource="{Binding Workspace.Subjects}" MinHeight="120" />
-          <TextBlock Text="{Binding Workspace.ComponentsLabel}" FontSize="18" FontWeight="SemiBold" />
-          <ListBox ItemsSource="{Binding Workspace.Components}" MinHeight="140" />
-          <TextBlock Text="{Binding Workspace.FundsLabel}" FontSize="18" FontWeight="SemiBold" />
-          <ListBox ItemsSource="{Binding Workspace.Funds}" MinHeight="100" />
-          <TextBlock Text="{Binding Workspace.ValidationLabel}" FontSize="18" FontWeight="SemiBold" />
-          <ListBox ItemsSource="{Binding Workspace.Findings}" MinHeight="110" />
-          <TextBlock Text="{Binding Workspace.StatutoryLabel}" FontSize="18" FontWeight="SemiBold" />
-          <ListBox ItemsSource="{Binding Workspace.Statutory}" MinHeight="120" />
-          <TextBlock Text="{Binding Workspace.MissingStatutoryNotice}" Foreground="{DynamicResource WarningBrush}" />
+          <TextBlock Text="{Binding Workspace.WorkflowLabel}" FontSize="18" FontWeight="SemiBold"/>
+          <ItemsControl ItemsSource="{Binding Workspace.Steps}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <WrapPanel/>
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Padding="12,8" Margin="0,0,8,8" CornerRadius="12" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                  <StackPanel>
+                    <TextBlock Text="{Binding Label}" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Status}" FontSize="11"/>
+                  </StackPanel>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Text="{Binding Workspace.SubjectsLabel}" FontSize="18" FontWeight="SemiBold"/>
+          <ItemsControl ItemsSource="{Binding Workspace.Subjects}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Classes="tableRow">
+                  <Grid ColumnDefinitions="90,170,150,130,70,90,*">
+                    <TextBlock Text="{Binding EmployeeCode}"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Name}"/>
+                    <TextBlock Grid.Column="2" Text="{Binding Organization}"/>
+                    <TextBlock Grid.Column="3" Text="{Binding Position}"/>
+                    <TextBlock Grid.Column="4" Text="{Binding JobGrade}"/>
+                    <TextBlock Grid.Column="5" Text="{Binding Status}"/>
+                    <TextBlock Grid.Column="6" Text="{Binding Scheme}"/>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        <TextBlock Text="{Binding InputSectionLabel}" FontSize="18" FontWeight="SemiBold"/>
+          <ItemsControl ItemsSource="{Binding Workspace.Inputs}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Classes="tableRow">
+                  <Grid ColumnDefinitions="90,150,140,80,150,120,*">
+                    <TextBlock Text="{Binding EmployeeCode}"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Code}"/>
+                    <TextBlock Grid.Column="2" Text="{Binding Value}"/>
+                    <TextBlock Grid.Column="3" Text="{Binding Unit}"/>
+                    <TextBlock Grid.Column="4" Text="{Binding Source}"/>
+                    <TextBlock Grid.Column="5" Text="{Binding EffectiveDate}"/>
+                    <TextBlock Grid.Column="6" Text="{Binding Revision}"/>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <ItemsControl ItemsSource="{Binding Workspace.Attendance}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Classes="tableRow">
+                  <Grid ColumnDefinitions="100,120,150,120,*">
+                    <TextBlock Text="{Binding EmployeeCode}"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Period}"/>
+                    <TextBlock Grid.Column="2" Text="{Binding Value}"/>
+                    <TextBlock Grid.Column="3" Text="{Binding Status}"/>
+                    <TextBlock Grid.Column="4" Text="{Binding Source}"/>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <ItemsControl ItemsSource="{Binding Workspace.Kpis}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Classes="tableRow">
+                  <Grid ColumnDefinitions="90,100,180,100,100,100,*">
+                    <TextBlock Text="{Binding EmployeeCode}"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Code}"/>
+                    <TextBlock Grid.Column="2" Text="{Binding Name}"/>
+                    <TextBlock Grid.Column="3" Text="{Binding Value}"/>
+                    <TextBlock Grid.Column="4" Text="{Binding Target}"/>
+                    <TextBlock Grid.Column="5" Text="{Binding Status}"/>
+                    <TextBlock Grid.Column="6" Text="{Binding Source}"/>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Text="{Binding Workspace.ComponentsLabel}" FontSize="18" FontWeight="SemiBold"/>
+          <ItemsControl ItemsSource="{Binding Workspace.Components}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Classes="tableRow">
+                  <Grid ColumnDefinitions="180,150,130,150,130,*">
+                    <TextBlock Text="{Binding Code}"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Value, StringFormat='{}{0:N2}'}"/>
+                    <TextBlock Grid.Column="2" Text="{Binding Method}"/>
+                    <TextBlock Grid.Column="3" Text="{Binding Source}"/>
+                    <TextBlock Grid.Column="4" Text="{Binding FundedAmount, StringFormat='{}{0:N2}'}"/>
+                    <TextBlock Grid.Column="5" Text="{Binding Status}"/>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Text="{Binding Workspace.FundsLabel}" FontSize="18" FontWeight="SemiBold"/>
+          <ItemsControl ItemsSource="{Binding Workspace.Funds}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Classes="tableRow">
+                  <Grid ColumnDefinitions="180,140,140,140,120,100,*">
+                    <TextBlock Text="{Binding Code}"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Demand, StringFormat='{}{0:N2}'}"/>
+                    <TextBlock Grid.Column="2" Text="{Binding Available, StringFormat='{}{0:N2}'}"/>
+                    <TextBlock Grid.Column="3" Text="{Binding Funded, StringFormat='{}{0:N2}'}"/>
+                    <TextBlock Grid.Column="4" Text="{Binding Deficit, StringFormat='{}{0:N2}'}"/>
+                    <TextBlock Grid.Column="5" Text="{Binding Coverage, StringFormat='{}{0:P1}'}"/>
+                    <TextBlock Grid.Column="6" Text="{Binding Method}"/>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Text="{Binding Workspace.ValidationLabel}" FontSize="18" FontWeight="SemiBold"/>
+          <ItemsControl ItemsSource="{Binding Workspace.Findings}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Classes="tableRow">
+                  <Grid ColumnDefinitions="100,120,230,*">
+                    <TextBlock Text="{Binding Severity}"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Scope}"/>
+                    <TextBlock Grid.Column="2" Text="{Binding Code}"/>
+                    <TextBlock Grid.Column="3" Text="{Binding Message}"/>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Text="{Binding Workspace.StatutoryLabel}" FontSize="18" FontWeight="SemiBold"/>
+          <ItemsControl ItemsSource="{Binding Workspace.Statutory}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Classes="tableRow">
+                  <Grid ColumnDefinitions="180,240,180,*">
+                    <TextBlock Text="{Binding Code}"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Category}"/>
+                    <TextBlock Grid.Column="2" Text="{Binding Amount, StringFormat='{}{0:N2}'}"/>
+                    <TextBlock Grid.Column="3" Text="{Binding Status}" FontWeight="Bold"/>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Text="{Binding Workspace.MissingStatutoryNotice}" Foreground="{DynamicResource WarningBrush}"/>
+        <TextBlock Text="{Binding ReviewSectionLabel}" FontSize="18" FontWeight="SemiBold"/>
+          <ItemsControl ItemsSource="{Binding Workspace.Variances}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Classes="tableRow">
+                  <Grid ColumnDefinitions="90,140,140,140,140,*">
+                    <TextBlock Text="{Binding EmployeeCode}"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Component}"/>
+                    <TextBlock Grid.Column="2" Text="{Binding Current}"/>
+                    <TextBlock Grid.Column="3" Text="{Binding Reference}"/>
+                    <TextBlock Grid.Column="4" Text="{Binding Difference}"/>
+                    <TextBlock Grid.Column="5" Text="{Binding Reason}"/>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <ItemsControl ItemsSource="{Binding Workspace.Approvals}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Classes="tableRow">
+                  <Grid ColumnDefinitions="150,90,150,150,120,*">
+                    <TextBlock Text="{Binding Case}"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Revision}"/>
+                    <TextBlock Grid.Column="2" Text="{Binding Run}"/>
+                    <TextBlock Grid.Column="3" Text="{Binding Fingerprint}"/>
+                    <TextBlock Grid.Column="4" Text="{Binding Status}"/>
+                    <TextBlock Grid.Column="5" Text="{Binding Actor}"/>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <ItemsControl ItemsSource="{Binding Workspace.Accounting}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Classes="tableRow">
+                  <Grid ColumnDefinitions="100,210,140,140,120,*">
+                    <TextBlock Text="{Binding Account}"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Description}"/>
+                    <TextBlock Grid.Column="2" Text="{Binding Debit}"/>
+                    <TextBlock Grid.Column="3" Text="{Binding Credit}"/>
+                    <TextBlock Grid.Column="4" Text="{Binding Dimension}"/>
+                    <TextBlock Grid.Column="5" Text="{Binding Reference}"/>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <ItemsControl ItemsSource="{Binding Workspace.Reports}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Classes="tableRow">
+                  <Grid ColumnDefinitions="190,100,110,90,160,*,Auto">
+                    <TextBlock Text="{Binding Type}"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Company}"/>
+                    <TextBlock Grid.Column="2" Text="{Binding Period}"/>
+                    <TextBlock Grid.Column="3" Text="{Binding Revision}"/>
+                    <TextBlock Grid.Column="4" Text="{Binding Run}"/>
+                    <TextBlock Grid.Column="5" Text="{Binding Status}"/>
+                <Button Grid.Column="6" Content="{Binding $parent[actipro:RibbonWindow].DataContext.ViewLabel}"/>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
         </StackPanel>
       </ScrollViewer>
-    </Grid>
-    <Border Grid.Row="2" Padding="14,8" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0">
-      <TextBlock Text="{Binding Workspace.ActivityText}" Foreground="{DynamicResource TextSecondaryBrush}" />
-    </Border>
+      <Border Grid.Row="2" Padding="14,8" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0">
+        <Grid ColumnDefinitions="*,Auto,Auto">
+          <TextBlock Text="{Binding Workspace.ActivityText}"/>
+          <TextBlock Grid.Column="1" Margin="12,0" Text="{Binding Appearance.Mode}"/>
+          <TextBlock Grid.Column="2" Text="{Binding Workspace.DemoLabel}" FontWeight="Bold"/>
+        </Grid>
+      </Border>
     </Grid>
   </actipro:RibbonContainerPanel>
 </actipro:RibbonWindow>
