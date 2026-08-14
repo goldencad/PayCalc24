@@ -13,6 +13,13 @@ public sealed partial class MainWindow : ActiproSoftware.UI.Avalonia.Controls.Ba
     {
         InitializeComponent();
         DataContext = root.Shell;
+        // The operational shell always reserves the ribbon band. Actipro's collapsible behavior is
+        // intended for embedded/narrow hosts and can collapse the entire control during initial
+        // macOS measure when the workspace contains a large ScrollViewer.
+        MainRibbon.IsCollapsible = false;
+        MainRibbon.IsMinimizable = false;
+        MainRibbon.IsMinimized = false;
+        MainRibbon.SelectedIndex = 0;
     }
     private void OnNavigationChanged(object? sender, SelectionChangedEventArgs e)
     {
@@ -30,6 +37,8 @@ public sealed partial class MainWindow : ActiproSoftware.UI.Avalonia.Controls.Ba
     {
         var checks = new List<string>();
         if (MainRibbon is null) throw new InvalidOperationException("SMOKE.ACTIPRO_RIBBON_MISSING");
+        if (MainRibbon.IsCollapsed || MainRibbon.IsMinimized || MainRibbon.SelectedIndex < 0)
+            throw new InvalidOperationException("SMOKE.ACTIPRO_RIBBON_NOT_OPERATIONAL");
         checks.Add("Actipro Ribbon renders");
         MainBackstage.IsOpen = true;
         if (!MainBackstage.IsOpen) throw new InvalidOperationException("SMOKE.ACTIPRO_BACKSTAGE_DID_NOT_OPEN");

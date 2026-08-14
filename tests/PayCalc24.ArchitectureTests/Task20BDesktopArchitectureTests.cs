@@ -9,6 +9,9 @@ public sealed class Task20BDesktopArchitectureTests
     {
         var xaml = File.ReadAllText(Path.Combine(Root, "src", "PayCalc24.Client.Avalonia", "MainWindow.axaml"));
         Assert.Contains("<actipro:Ribbon x:Name=\"MainRibbon\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("IsCollapsible=\"False\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("IsMinimizable=\"False\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("SelectedIndex=\"0\"", xaml, StringComparison.Ordinal);
         Assert.Contains("<actipro:RibbonBackstage x:Name=\"MainBackstage\"", xaml, StringComparison.Ordinal);
         Assert.Contains("x:Name=\"EnglishOption\"", xaml, StringComparison.Ordinal);
         Assert.Contains("x:Name=\"VietnameseOption\"", xaml, StringComparison.Ordinal);

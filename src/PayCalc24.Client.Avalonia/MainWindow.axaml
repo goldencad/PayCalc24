@@ -1,7 +1,13 @@
 <?xml version="1.0"?>
 <actipro:RibbonWindow xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui" x:Class="PayCalc24.Client.Avalonia.MainWindow" Width="1280" Height="820" MinWidth="980" MinHeight="680" Title="{Binding AppTitle}" Background="{DynamicResource BackgroundBrush}">
   <actipro:RibbonContainerPanel>
-    <actipro:Ribbon x:Name="MainRibbon">
+    <actipro:Ribbon x:Name="MainRibbon"
+                    SelectedIndex="0"
+                    IsCollapsible="False"
+                    IsMinimizable="False"
+                    IsMinimized="False"
+                    IsOptionsButtonVisible="False"
+                    MinHeight="118">
       <actipro:Ribbon.ApplicationButtonContent>
         <actipro:RibbonApplicationButton Label="File" KeyTipText="{Binding FileKeyTip}"/>
       </actipro:Ribbon.ApplicationButtonContent>
