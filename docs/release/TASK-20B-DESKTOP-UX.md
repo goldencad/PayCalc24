@@ -13,12 +13,12 @@ The client remains presentation-only, references only public Contracts, and cont
 ## Verification
 
 - Release client build: 0 warnings, 0 errors.
-- Application tests: 180 passed.
-- Architecture tests: 30 passed.
-- Total: 210 passed.
+- Application tests: 188 passed.
+- Architecture tests: 32 passed.
+- Total: 220 passed.
 - macOS ARM64 self-contained publish: PASS.
 - Windows x64 self-contained publish: PASS.
 - Windows native smoke: NOT EXECUTED (no Windows runtime).
-- macOS GUI smoke in this execution environment: NOT EXECUTED. Avalonia.Native could not start the macOS render timer (`-6661`) because the automation sandbox has no interactive WindowServer rendering session. This is an environment limitation; it is not reported as a feature PASS.
+- Real macOS ARM64 GUI smoke on commit `bcb2470180509757f6d823720bccf4dce6ba571a`: PASS. The maintained Actipro Ribbon and Backstage render; the former chevron crash is fixed; structured workspaces remain reachable across all seven tabs; en-US/vi-VN and System/Light/Dark switch visibly at runtime; clean Exit works.
 
 No production MariaDB, login, licensing adapter, signing, or notarization work was performed.
