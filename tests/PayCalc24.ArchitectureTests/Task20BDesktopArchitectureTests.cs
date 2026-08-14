@@ -15,7 +15,8 @@ public sealed class Task20BDesktopArchitectureTests
         Assert.Contains("x:Name=\"RibbonHost\"", xaml, StringComparison.Ordinal);
         Assert.Contains("RibbonHost.ZIndex = 1", codeBehind, StringComparison.Ordinal);
         Assert.Contains("<actipro:RibbonBackstageHeaderButton", xaml, StringComparison.Ordinal);
-        Assert.Contains("ActiproSoftware.Avalonia.Bars/Themes/Common.axaml", application, StringComparison.Ordinal);
+        Assert.Contains("<actipro:ModernTheme Includes=\"Pro\"", application, StringComparison.Ordinal);
+        Assert.DoesNotContain("ActiproSoftware.Avalonia.Bars/Themes/Common.axaml", application, StringComparison.Ordinal);
         Assert.Contains("x:Name=\"EnglishOption\"", xaml, StringComparison.Ordinal);
         Assert.Contains("x:Name=\"VietnameseOption\"", xaml, StringComparison.Ordinal);
         Assert.Contains("x:Name=\"SystemThemeOption\"", xaml, StringComparison.Ordinal);

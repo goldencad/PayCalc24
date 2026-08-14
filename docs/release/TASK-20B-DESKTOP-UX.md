@@ -2,7 +2,7 @@
 
 Maintenance baseline: `6446492e08149564b8bd88655a96e2939e70ab50`
 
-Task 20B is ported directly onto the Task 20 maintenance shell. The Actipro Bars theme resource, elevated `RibbonHost`, real Ribbon navigation, and Backstage composition from that maintenance commit are preserved; the structured operational workspaces are layered beneath that shell.
+Task 20B is ported directly onto the Task 20 maintenance shell. The elevated `RibbonHost`, real Ribbon navigation, and Backstage composition from that maintenance commit are preserved; the structured operational workspaces are layered beneath that shell. Actipro Pro resources are loaded through `ModernTheme Includes="Pro"`, ensuring popup/menu theme tokens are generated before Ribbon menus open.
 
 The default Avalonia window now uses the official Actipro Avalonia Pro 25.2.0 Ribbon and a usable Backstage. The primary left navigation has been removed. Ribbon commands select all operational workspaces, while Backstage exposes runtime language (en-US/vi-VN), runtime theme (System/Light/Dark), application information, and clean exit.
 

@@ -114,8 +114,8 @@ public sealed class ProjectDependencyTests
         var path = Path.Combine(RepositoryRoot, "src", "PayCalc24.Client.Avalonia", "App.axaml");
         var document = XDocument.Load(path);
         var modernTheme = Assert.Single(document.Descendants(), x => x.Name.LocalName == "ModernTheme");
-        var barsTheme = Assert.Single(modernTheme.Elements(), x => x.Name.LocalName == "StyleInclude");
-        Assert.Equal("avares://ActiproSoftware.Avalonia.Bars/Themes/Common.axaml", barsTheme.Attribute("Source")?.Value);
+        Assert.Equal("Pro", modernTheme.Attribute("Includes")?.Value);
+        Assert.DoesNotContain(modernTheme.Elements(), x => x.Name.LocalName == "StyleInclude");
     }
 
     [Fact]

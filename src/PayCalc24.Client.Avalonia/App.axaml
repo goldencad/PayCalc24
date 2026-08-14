@@ -3,9 +3,7 @@
              xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
              x:Class="PayCalc24.Client.Avalonia.App">
   <Application.Styles>
-    <actipro:ModernTheme>
-      <StyleInclude Source="avares://ActiproSoftware.Avalonia.Bars/Themes/Common.axaml" />
-    </actipro:ModernTheme>
+    <actipro:ModernTheme Includes="Pro" />
     <Style Selector="Border.tableRow">
       <Setter Property="Padding" Value="10,8" />
       <Setter Property="Margin" Value="0,0,0,4" />
