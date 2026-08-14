@@ -14,6 +14,21 @@
 - New AI virtual employee/role: use normal User/Role/Permission administration and an independent account.
 - New license rule: change the entitlement adapter/shared access guard, not controllers or ViewModels.
 
+## Changing an operational workspace
+
+- Workspace layout, table columns, detail panels or empty/loading/error presentation: change
+  `src/PayCalc24.Client.Avalonia/MainWindow.axaml`.
+- Workspace selection, filtering, localized captions, command enablement projection or demo read models: change
+  `src/PayCalc24.Client.Avalonia/Features/Payroll/OperationalWorkspaceViewModel.cs`.
+- Ribbon/Backstage labels, language/theme commands or shell wiring: change
+  `src/PayCalc24.Client.Avalonia/Features/Shell/ShellViewModel.cs` and `MainWindow.axaml`.
+- KPI presentation consumes the structured Performance/Application boundary; it must not add a separate Human
+  or AI business path.
+- Approval presentation consumes the Task 17 approval lifecycle/capability projection; it must not reproduce
+  submit/review/approve/reject/lock rules.
+- A new dynamic payroll component normally requires no Desktop code. Add its definition and behavior below
+  Desktop; the Calculate/Explain templates render component projection rows dynamically.
+
 ## Non-negotiables
 
 - No P1/P2/P3 or company-specific branches in generic engines or UI.

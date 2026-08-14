@@ -1,6 +1,6 @@
 namespace PayCalc24.Client.Avalonia.Presentation;
 
-public enum IconKey { Dashboard, Subjects, Inputs, Attendance, Kpi, Prepare, Calculate, Funds, Validate, Explain, Variance, Scenario, Approval, Settlement, Accounting, Reports, Settings, Language, Theme, Payroll, Employee, Review, Approve, Lock, Report, StatusInfo, StatusWarning, StatusError, Missing }
+public enum IconKey { Dashboard, Subjects, Inputs, Attendance, Kpi, Prepare, Calculate, Funds, Validate, Explain, Variance, Scenario, Approval, Settlement, Accounting, Reports, Refresh, Search, Filter, Import, ValidateAction, Commit, Approve, Reject, Lock, Generate, Preview, Export, Settings, Language, Theme, Payroll, Employee, Review, Report, StatusInfo, StatusWarning, StatusError, Missing }
 public sealed record IconDescriptor(IconKey Key, Uri AssetUri);
 public interface IIconProvider { IconDescriptor Resolve(IconKey key); }
 
@@ -14,6 +14,9 @@ public sealed class SvgIconProvider : IIconProvider
         [IconKey.Language]="action", [IconKey.Theme]="action", [IconKey.Payroll]="payroll", [IconKey.Employee]="person",
         [IconKey.Calculate]="action", [IconKey.Review]="action", [IconKey.Approve]="action",
         [IconKey.Lock]="action", [IconKey.Scenario]="dashboard", [IconKey.Report]="report",
+        [IconKey.Refresh]="action", [IconKey.Search]="action", [IconKey.Filter]="action", [IconKey.Import]="action",
+        [IconKey.ValidateAction]="status", [IconKey.Commit]="action", [IconKey.Reject]="action",
+        [IconKey.Generate]="report", [IconKey.Preview]="report", [IconKey.Export]="report",
         [IconKey.Settings]="action", [IconKey.StatusInfo]="status", [IconKey.StatusWarning]="status",
         [IconKey.StatusError]="status", [IconKey.Missing]="missing"
     };
