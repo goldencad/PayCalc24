@@ -1,5 +1,20 @@
 # PayCalc24 MVP Release Candidate
 
+## Task 20C operational workspace presentation
+
+The desktop now provides distinct operator-focused workspaces instead of a single stacked demo projection.
+Dashboard is summary-oriented; operational areas provide structured rows, filtering/selection where useful,
+detail/provenance presentation, explicit empty/busy/error/read-only states and contextual Ribbon actions.
+Scenario remains visibly non-production, report contexts are pinned, and unavailable statutory values remain
+explicitly unavailable rather than zero. The work is presentation-only: no payroll semantics, database schema,
+provider behavior or public business workflow changed.
+
+Release verification: 193 Application/Presentation tests and 34 Architecture tests pass (227 total), with
+0 Release build warnings and 0 errors. Self-contained `osx-arm64` and `win-x64` publish pass. Real macOS ARM64
+GUI smoke passes for the redesigned Dashboard and separate operational workspaces, structured master/detail
+presentation, contextual Ribbon and drill-down, en-US/vi-VN, System/Light/Dark, Ribbon chevron stability,
+DEMO/NON-PRODUCTION markers and clean Exit. Windows native GUI smoke remains not executed.
+
 ## Task 20B desktop UX completion
 
 The operational desktop shell, structured demo workspaces, interactive Backstage language/theme controls, semantic icon coverage, and Task 20B verification are documented in `TASK-20B-DESKTOP-UX.md`. This change adds no migration and does not begin RC production integration.

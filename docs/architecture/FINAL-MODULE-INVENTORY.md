@@ -23,3 +23,12 @@
 
 Dependencies point toward public Contracts/Domain. Desktop, providers and persistence are outer adapters; Reporting has no Avalonia dependency.
 The external Agent Gateway is a client of Application API, not a PayCalc24 module or payroll engine.
+
+## Desktop operational workspaces
+
+The Actipro Ribbon/Backstage shell hosts 17 presentation-only workspaces: Dashboard, Subjects, Inputs,
+Attendance, KPI, Prepare, Calculate, Funds, Validate, Explain, Variance, Scenario, Approval, Settlement,
+Accounting and Reports. `OperationalWorkspaceViewModel` owns selection, visible-row filtering, busy/error/empty
+presentation and command capability consumption. `MainWindow.axaml` owns the theme-aware workspace templates.
+Immutable calculation, review, approval, statutory, accounting and reporting projections remain authoritative;
+Desktop formats and navigates them but does not derive business outcomes.
