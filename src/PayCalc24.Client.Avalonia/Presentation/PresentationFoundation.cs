@@ -27,6 +27,28 @@ public sealed class DelegateCommand(Action execute, Func<bool>? canExecute = nul
     public void Refresh() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
 }
 
+public sealed class DelegateCommand<T>(Action<T?> execute, Func<T?, bool>? canExecute = null) : ICommand
+{
+    public event EventHandler? CanExecuteChanged;
+    public bool CanExecute(object? parameter) => canExecute?.Invoke((T?)parameter) ?? true;
+    public void Execute(object? parameter) => execute((T?)parameter);
+    public void Refresh() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+}
+
+public sealed class AsyncDelegateCommand(Func<Task> execute) : ICommand
+{
+    private bool running;
+    public event EventHandler? CanExecuteChanged;
+    public bool CanExecute(object? parameter) => !running;
+    public async void Execute(object? parameter)
+    {
+        if (running) return;
+        running = true; CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        try { await execute().ConfigureAwait(true); }
+        finally { running = false; CanExecuteChanged?.Invoke(this, EventArgs.Empty); }
+    }
+}
+
 public enum AppRoute { Dashboard, Payroll, Configuration, Scenarios, Reports }
 public sealed record NavigationItem(AppRoute Route, string ResourceKey, IconKey Icon);
 

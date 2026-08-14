@@ -20,63 +20,63 @@ Implement generic company-scoped Payroll Fund catalog/versioning; FIXED/INPUT/FO
 
 **Acceptance:** P3 is configuration only; Company A/B generic Fund proof; no live/current/latest resolution; Task 10 immutable component results are not mutated; Replay/Back-test proof; CI green.
 
-## Task 12 — Attendance Import & Attendance Policy Module
+## Task 12 — Attendance Import & Attendance Policy Module — CLOSED
 **Depends on:** 04,06,07,08,09
 
 Implement import mapping/validation/preview/commit, immutable import batches, attendance records/policy evaluation and derived canonical Payroll Inputs.
 
 **Acceptance:** blocking import errors; source lineage; derived workdays/leave/OT/attendance-score/gates written to PayrollInputLedger; no direct compensation mutation; replayable.
 
-## Task 13 — KPI / Performance / Gate Module
+## Task 13 — KPI / Performance / Gate Module — CLOSED
 **Depends on:** 04,06,07,08,09
 
 Implement KPI catalog/assignment/result, weighted achievement, configurable Gate framework and derived canonical Payroll Inputs.
 
 **Acceptance:** no fixed three-tier assumption; Overall → Gate → Final configurable; outputs written to PayrollInputLedger; explain/provenance/tests.
 
-## Task 14 — TS24 Reference Policy Pack / P3 Tests
+## Task 14 — TS24 Reference Policy Pack / P3 Tests — CLOSED
 **Depends on:** 10,11,12,13
 
 Encode TS24 compensation policy entirely as configuration, parameters, formulas, lookup/rules and tests.
 
 **Acceptance:** TS24 P1/P2/P3, Floor/Target/Maximum, Gate, Eligible/Paid and Coverage boundary cases pass; TS24 values never become Core constants.
 
-## Task 15 — Validation, Explain Payroll, Variance & Funding Review
+## Task 15 — Validation, Explain Payroll, Variance & Funding Review — CLOSED
 **Depends on:** 10–14
 
 Aggregate validation, employee Explain Payroll, period variance, Fund/coverage review and actionable diagnostics.
 
 **Acceptance:** blocking/warning/info; trace connects facts, formulas, intermediate values, component results, Fund allocations and versions; funding shortage explicit.
 
-## Task 16 — Scenario / Replay / Back-test / What-if Orchestration
+## Task 16 — Scenario / Replay / Back-test / What-if Orchestration — CLOSED
 **Depends on:** 10,11,12,13,15
 
 Persist isolated ScenarioSnapshots and orchestrate Replay/Back-test/What-if using the same production Formula/Calculation/Fund engines.
 
 **Acceptance:** no production mutation; exact historical Replay; historical facts + alternative policies; scenario comparison for payroll/fund/coverage/cost metrics.
 
-## Task 17 — Review, Approval, Lock & Adjustment/Recalculation
+## Task 17 — Review, Approval, Lock & Adjustment/Recalculation — CLOSED
 **Depends on:** 09,10,15
 
 Implement submit/review/approve/reject/lock plus authorized adjustment/recalculation producing Revision/Version N+1.
 
 **Acceptance:** reason/audit required; old snapshots/results immutable; direct mutation after lock blocked.
 
-## Task 18 — Canonical Integrations, Statutory Results, Net Pay & Accounting
+## Task 18 — Canonical Integrations, Statutory Results, Net Pay & Accounting — CLOSED
 **Depends on:** 10,17
 
 Implement provider interfaces/adapters for Employee/Attendance/Insurance/PIT/Accounting and compose statutory results into Net Pay/Employer Cost/accounting/export boundaries.
 
 **Acceptance:** provider implementations do not leak into Core; missing statutory/provider result is not zero; idempotent integration; Odoo/ezBooks/generic contracts supported.
 
-## Task 19 — Reporting + Avalonia UI Foundation + SVG Media System
+## Task 19 — Reporting + Avalonia UI Foundation + SVG Media System — CLOSED
 **Depends on:** 01,05,08,15
 
 Implement ReportDefinition/Snapshot backend plus Avalonia shell, shared components, localization, System/Light/Dark theme, Actipro Ribbon/Backstage and SVG IconKey/provider/pack loader.
 
 **Acceptance:** no feature XAML hard-coded SVG paths/colors/business strings; Media pack swappable; dynamic grids; Windows/macOS/Linux UI smoke tests.
 
-## Task 20 — Avalonia + Actipro Operational UI / End-to-End MVP
+## Task 20 — Avalonia + Actipro Operational UI / End-to-End MVP — CLOSED
 **Depends on:** 04–19 as relevant
 
 Implement Dashboard, Payroll Workspace, Subjects, Schemes, Inputs, Attendance, KPI, Validate, Calculate, Explain, Funds, Simulation, Approval/Lock, Integrations, Reports and Audit.

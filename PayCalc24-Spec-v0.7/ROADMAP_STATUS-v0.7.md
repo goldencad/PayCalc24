@@ -12,13 +12,13 @@
 09 CLOSED
 10 CLOSED
 11 CLOSED — Generic Payroll Funds / Allocation / Coverage
-12 NOT STARTED — Attendance
-13 NOT STARTED — KPI / Performance / Gate
-14 NOT STARTED — TS24 Reference Policy Pack / P3
-15 NOT STARTED — Validation / Explain / Variance / Funding Review
-16 NOT STARTED — Scenario / Replay / Back-test / What-if
-17 NOT STARTED — Review / Approval / Lock / Recalculation
+12 CLOSED — Attendance
+13 CLOSED — KPI / Performance / Gate
+14 CLOSED — TS24 Reference Policy Pack / P3
+15 CLOSED — Validation / Explain / Variance / Funding Review
+16 CLOSED — Scenario / Replay / Back-test / What-if
+17 CLOSED — Review / Approval / Lock / Recalculation
 18 CLOSED — Statutory / Net Pay / Accounting / Integrations
 19 CLOSED — Reporting + Avalonia UI Foundation + SVG
-20 NOT STARTED — Avalonia + Actipro End-to-End MVP
+20 CLOSED — Avalonia + Actipro End-to-End MVP
 ```

@@ -66,6 +66,21 @@ public sealed class Task19PresentationReportingTests
     }
 
     [Fact]
+    public void OperationalWorkspaceIsDynamicLocalizedAndCompanyIsolated()
+    {
+        var root = new DesktopCompositionRoot();
+        Assert.Contains(root.Workspace.Components, x => x.Code == "BASE");
+        Assert.Contains(root.Workspace.Components, x => x.Code == "ATT_ALLOWANCE");
+        Assert.Contains(root.Workspace.Components, x => x.Code == "PERFORMANCE_BONUS");
+        Assert.Contains(root.Workspace.Statutory, x => x.Status == "UNAVAILABLE" && x.Amount is null);
+        root.Workspace.SelectArea("SCENARIO");
+        root.Culture.Select("vi-VN");
+        Assert.Equal("KỊCH BẢN", root.Workspace.AreaTitle);
+        root.Company.Switch(CompanyId.From(Guid.NewGuid()));
+        Assert.Equal("DASHBOARD", root.Workspace.SelectedArea);
+    }
+
+    [Fact]
     public void ReportsPinIdentityAndFormatCultureWithoutChangingCanonicalSource()
     {
         var request = Request("en-US"); var source = new FakeReportSource();

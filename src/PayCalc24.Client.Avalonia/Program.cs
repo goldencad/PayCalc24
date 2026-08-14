@@ -7,8 +7,13 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args) => BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 
-    public static AppBuilder BuildAvaloniaApp() =>
-        AppBuilder.Configure<App>()
-            .UsePlatformDetect()
-            .LogToTrace();
+    public static AppBuilder BuildAvaloniaApp()
+    {
+        var builder = AppBuilder.Configure<App>();
+        var licensee = Environment.GetEnvironmentVariable("PAYCALC24_ACTIPRO_LICENSEE");
+        var licenseKey = Environment.GetEnvironmentVariable("PAYCALC24_ACTIPRO_LICENSE_KEY");
+        if (!string.IsNullOrWhiteSpace(licensee) && !string.IsNullOrWhiteSpace(licenseKey))
+            builder = builder.RegisterActiproLicense(licensee, licenseKey);
+        return builder.UsePlatformDetect().LogToTrace();
+    }
 }

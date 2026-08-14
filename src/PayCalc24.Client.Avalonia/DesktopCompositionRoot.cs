@@ -1,6 +1,7 @@
 using PayCalc24.Client.Avalonia.Features.Shell;
 using PayCalc24.Client.Avalonia.Presentation;
 using PayCalc24.Contracts.Identity;
+using PayCalc24.Client.Avalonia.Features.Payroll;
 
 namespace PayCalc24.Client.Avalonia;
 
@@ -13,9 +14,11 @@ public sealed class DesktopCompositionRoot
     public CompanyPresentationContext Company { get; } = new(CompanyId.From(Guid.Parse("00000000-0000-0000-0000-000000000001")));
     public PayrollWorkspaceState Payroll { get; }
     public ShellViewModel Shell { get; }
+    public OperationalWorkspaceViewModel Workspace { get; }
     public DesktopCompositionRoot()
     {
         Payroll = new PayrollWorkspaceState(Company);
-        Shell = new ShellViewModel(Navigation, new DesktopLocalizationService(new DesktopResourceProvider()), Culture);
+        Workspace = DemoPayrollProjection.Create(Company, Culture);
+        Shell = new ShellViewModel(Navigation, new DesktopLocalizationService(new DesktopResourceProvider()), Culture, Appearance, Workspace);
     }
 }

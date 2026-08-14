@@ -79,6 +79,18 @@ public sealed class ProjectDependencyTests
     }
 
     [Fact]
+    public void OperationalDesktopContainsNoPayrollEngineOrFixedBusinessModel()
+    {
+        AssertSourceExcludes("src/PayCalc24.Client.Avalonia",
+            "new SafeFormulaEngine", "new PayrollCalculationService", "new PayrollFundService",
+            "new AttendanceService", "new PerformanceService", "new StatutoryOrchestrationService",
+            "Kpi1", "Kpi2", "Kpi3", "BhxhAmount", "BhytAmount", "BhtnAmount",
+            "component.Code == \"P1\"", "component.Code == \"P2\"", "component.Code == \"P3\"");
+        var project = LoadProject("src/PayCalc24.Client.Avalonia/PayCalc24.Client.Avalonia.csproj");
+        Assert.DoesNotContain(ProjectReferences(project), reference => reference.StartsWith("PayCalc24.", StringComparison.Ordinal) && reference != "PayCalc24.Contracts");
+    }
+
+    [Fact]
     public void FeatureModulesDoNotReferenceOtherFeatureModules()
     {
         var moduleProjects = Directory.GetFiles(
