@@ -2,6 +2,7 @@
 
 - Version: `0.1.0-mvp`
 - Original Task 20 baseline: `277ee64112516da36449c2bb84f346e99743205d`
+- Task 20 feature commit: `e9b7deff3462f05c1acaf2a7d12ade2a903f77ab`
 - Build: `dotnet build PayCalc24.sln --configuration Release`
 - Verification: 0 warnings, 0 errors; 190 tests passed (165 Application/Presentation/Reporting and 25 Architecture).
 - Runtime: self-contained .NET 9 Avalonia desktop executable; signing and notarization are outside Task 20.
