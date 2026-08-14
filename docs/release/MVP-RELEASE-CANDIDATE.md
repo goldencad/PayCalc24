@@ -1,5 +1,9 @@
 # PayCalc24 MVP Release Candidate
 
+## Task 20B desktop UX completion
+
+The operational desktop shell, structured demo workspaces, interactive Backstage language/theme controls, semantic icon coverage, and Task 20B verification are documented in `TASK-20B-DESKTOP-UX.md`. This change adds no migration and does not begin RC production integration.
+
 ## Task 20A post-MVP extension
 
 - Unified `/api/v1` Application API and shared in-process boundary are available for human and machine clients.

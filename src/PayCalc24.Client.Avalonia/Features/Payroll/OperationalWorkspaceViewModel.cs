@@ -11,6 +11,13 @@ public sealed record ComponentRow(string Code, decimal Value, string Method, str
 public sealed record FundRow(string Code, decimal Available, decimal Demand, decimal Funded, decimal Deficit, decimal Reserve, decimal Coverage, string Method);
 public sealed record StatutoryRow(string Code, string Category, decimal? Amount, string Status);
 public sealed record FindingRow(string Severity, string Scope, string Code, string Message);
+public sealed record InputRow(string EmployeeCode, string Code, string Value, string Unit, string Source, string EffectiveDate, string Revision);
+public sealed record AttendanceRow(string EmployeeCode, string Period, string Value, string Status, string Source);
+public sealed record KpiRow(string EmployeeCode, string Code, string Name, decimal Value, string Target, string Status, string Source);
+public sealed record VarianceRow(string EmployeeCode, string Component, decimal Current, decimal Reference, decimal Difference, string Reason);
+public sealed record ApprovalRow(string Case, string Revision, string Run, string Fingerprint, string Status, string Actor);
+public sealed record AccountingRow(string Account, string Description, decimal Debit, decimal Credit, string Dimension, string Reference);
+public sealed record ReportRow(string Type, string Company, string Period, string Revision, string Run, string Status);
 
 /// <summary>
 /// Development-only deterministic projection. It proves the complete desktop composition without
@@ -36,7 +43,15 @@ public static class DemoPayrollProjection
             [new("PIT", "TAX", 3_240_000m, "CALCULATED"), new("SOCIAL_INSURANCE", "EMPLOYEE_CONTRIBUTION", 2_400_000m, "CALCULATED"),
              new("EXTERNAL_ADJUSTMENT", "OTHER_DEDUCTION", null, "UNAVAILABLE")],
             [new("WARNING", "FUND", "FUND.COVERAGE_SHORTAGE", "Funding demand exceeds available amount."),
-             new("INFO", "PERIOD", "PAYROLL.REVISION_PINNED", "Snapshot revision 1 is selected.")]);
+             new("INFO", "PERIOD", "PAYROLL.REVISION_PINNED", "Snapshot revision 1 is selected.")],
+            [new("E001", "WORK_DAYS", "21.5", "days", "ATTENDANCE", "2026-07-31", "3"),
+             new("E002", "SALES_VALUE", "840000000", "VND", "ERP", "2026-07-31", "2")],
+            [new("E001", "2026-07", "21.5 days", "VALID", "ATTENDANCE_BATCH_07"), new("E002", "2026-07", "22 days", "VALID", "ATTENDANCE_BATCH_07")],
+            [new("E001", "QUALITY", "Quality score", 92m, "80–100", "VALID", "KPI_BATCH_07"), new("E002", "SALES", "Sales achievement", 105m, ">= 100", "VALID", "KPI_BATCH_07")],
+            [new("E001", "BASE", 32_000_000m, 31_000_000m, 1_000_000m, "Assignment revision")],
+            [new("APR-2026-07", "1", "DEMO-RUN-001", "7a21…f04c", "IN_REVIEW", "demo.reviewer")],
+            [new("6421", "Payroll expense", 38_000_000m, 0m, "OPS", "DEMO-RUN-001"), new("3341", "Payroll payable", 0m, 38_000_000m, "OPS", "DEMO-RUN-001")],
+            [new("Payroll summary", "DEMO", "2026-07", "1", "DEMO-RUN-001", "AVAILABLE"), new("Subject detail", "DEMO", "2026-07", "1", "DEMO-RUN-001", "AVAILABLE"), new("Settlement summary", "DEMO", "2026-07", "1", "DEMO-RUN-001", "AVAILABLE")]);
 }
 
 public sealed class OperationalWorkspaceViewModel : ViewModelBase
@@ -49,12 +64,17 @@ public sealed class OperationalWorkspaceViewModel : ViewModelBase
     public OperationalWorkspaceViewModel(CompanyPresentationContext company, CultureState culture,
         IReadOnlyList<StatusCard> cards, IReadOnlyList<WorkspaceStep> steps, IReadOnlyList<SubjectRow> subjects,
         IReadOnlyList<ComponentRow> components, IReadOnlyList<FundRow> funds,
-        IReadOnlyList<StatutoryRow> statutory, IReadOnlyList<FindingRow> findings)
+        IReadOnlyList<StatutoryRow> statutory, IReadOnlyList<FindingRow> findings,
+        IReadOnlyList<InputRow> inputs, IReadOnlyList<AttendanceRow> attendance, IReadOnlyList<KpiRow> kpis,
+        IReadOnlyList<VarianceRow> variances, IReadOnlyList<ApprovalRow> approvals,
+        IReadOnlyList<AccountingRow> accounting, IReadOnlyList<ReportRow> reports)
     {
         this.company = company;
         this.culture = culture;
         Cards = cards; Steps = steps; Subjects = subjects; Components = components; Funds = funds;
         Statutory = statutory; Findings = findings;
+        Inputs = inputs; Attendance = attendance; Kpis = kpis; Variances = variances;
+        Approvals = approvals; Accounting = accounting; Reports = reports;
         Areas = new(["DASHBOARD", "SUBJECTS", "INPUTS", "ATTENDANCE", "KPI", "PREPARE", "CALCULATE",
             "FUNDS", "VALIDATE", "EXPLAIN", "VARIANCE", "SCENARIO", "APPROVAL", "SETTLEMENT", "ACCOUNTING", "REPORTS"]);
         company.CompanyChanged += (_, _) => ResetForCompany();
@@ -71,6 +91,13 @@ public sealed class OperationalWorkspaceViewModel : ViewModelBase
     public IReadOnlyList<FundRow> Funds { get; }
     public IReadOnlyList<StatutoryRow> Statutory { get; }
     public IReadOnlyList<FindingRow> Findings { get; }
+    public IReadOnlyList<InputRow> Inputs { get; }
+    public IReadOnlyList<AttendanceRow> Attendance { get; }
+    public IReadOnlyList<KpiRow> Kpis { get; }
+    public IReadOnlyList<VarianceRow> Variances { get; }
+    public IReadOnlyList<ApprovalRow> Approvals { get; }
+    public IReadOnlyList<AccountingRow> Accounting { get; }
+    public IReadOnlyList<ReportRow> Reports { get; }
     public string CompanyLabel => company.CompanyId.Value.ToString("N")[..8].ToUpperInvariant();
     public string Header => culture.Culture == "vi-VN" ? "Kỳ lương 07/2026 · Bản chụp 1" : "Payroll 07/2026 · Snapshot 1";
     public string CompanyBackstage => Local("Company context and selection", "Ngữ cảnh và lựa chọn công ty");
