@@ -1,5 +1,14 @@
 # PayCalc24 MVP Release Candidate
 
+## Task 20A post-MVP extension
+
+- Unified `/api/v1` Application API and shared in-process boundary are available for human and machine clients.
+- AI virtual employees use independent normal user accounts and the existing Role/Permission model.
+- Product entitlement is enforced below Desktop by the shared application guard; expired or unavailable entitlement cannot be bypassed by re-enabling UI commands.
+- Capability discovery uses the execution guard and publishes stable diagnostics plus sensitivity metadata.
+- The Agent Gateway remains external. PayCalc24 contains no natural-language parser or AI-specific payroll endpoint/engine.
+- No database migration is introduced by Task 20A.
+
 - Version: `0.1.0-mvp`
 - Original Task 20 baseline: `277ee64112516da36449c2bb84f346e99743205d`
 - Task 20 feature commit: `e9b7deff3462f05c1acaf2a7d12ade2a903f77ab`

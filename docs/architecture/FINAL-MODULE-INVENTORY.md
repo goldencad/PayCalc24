@@ -18,5 +18,8 @@
 | Integration/Statutory | Provider-neutral statutory, settlement and accounting | Provider results/delivery receipts | Jurisdiction/provider adapter |
 | Reporting | Pinned report source and renderer boundary | Report provenance/hash | Renderer/report definition |
 | Desktop | Avalonia shell, operational projections, localization/theme/icons | Selected exact revision only | Application-service adapter |
+| Application API / Access Channel | Versioned HTTP and in-process access to the same application operations; canonical request context and capabilities | Correlation/idempotency and audit provenance | Authenticated client/channel adapter |
+| Licensing / Entitlement | Shared fail-closed guard over the existing online entitlement source | No new payroll persistence | Online entitlement adapter |
 
 Dependencies point toward public Contracts/Domain. Desktop, providers and persistence are outer adapters; Reporting has no Avalonia dependency.
+The external Agent Gateway is a client of Application API, not a PayCalc24 module or payroll engine.

@@ -9,6 +9,10 @@
 - New ERP: Integration adapter.
 - New report/renderer: Reporting definition/renderer.
 - New screen: Desktop feature using application contracts.
+- New API operation: expose an existing application command/query through the canonical dispatcher and action catalog.
+- New AI capability: assign normal permissions/configuration and reuse the existing API operation; never add AI-specific business code.
+- New AI virtual employee/role: use normal User/Role/Permission administration and an independent account.
+- New license rule: change the entitlement adapter/shared access guard, not controllers or ViewModels.
 
 ## Non-negotiables
 
@@ -21,3 +25,4 @@
 - Formula Engine is I/O-free and statutory law stays behind provider boundaries.
 - Missing statutory result is not zero.
 - Scenario execution never mutates Production.
+- Effective access is permission intersected with product entitlement and owning workflow state; channel metadata grants no rights.

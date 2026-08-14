@@ -2,6 +2,15 @@ namespace PayCalc24.Contracts.Diagnostics;
 
 public static class DiagnosticCodes
 {
+    public const string AuthUnauthenticated = "AUTH.UNAUTHENTICATED";
+    public const string AuthPermissionDenied = "AUTH.PERMISSION_DENIED";
+    public const string AuthPrincipalDisabled = "AUTH.PRINCIPAL_DISABLED";
+    public const string LicenseExpired = "LICENSE.EXPIRED";
+    public const string LicenseBlocked = "LICENSE.BLOCKED";
+    public const string LicenseEntitlementUnavailable = "LICENSE.ENTITLEMENT_UNAVAILABLE";
+    public const string LicenseFeatureUnavailable = "LICENSE.FEATURE_UNAVAILABLE";
+    public const string ApiInvalidRequest = "API.INVALID_REQUEST";
+    public const string ApiIdempotencyConflict = "API.IDEMPOTENCY_CONFLICT";
     public const string StatutoryProviderNotFound = "STATUTORY.PROVIDER_NOT_FOUND";
     public const string StatutoryProviderVersionUnavailable = "STATUTORY.PROVIDER_VERSION_UNAVAILABLE";
     public const string StatutoryResultMissing = "STATUTORY.RESULT_MISSING";
